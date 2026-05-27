@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/memeplex.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,236 +10,223 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --ink:#08080c;
-  --paper:#f4f0e8;
-  --cream:#faf7f2;
-  --gold:#e8c547;
-  --acid:#c8f53a;
-  --coral:#ff4d4d;
-  --violet:#7c3aed;
-  --cyan:#00d4ff;
-  --muted:rgba(244,240,232,0.5);
-  --ff-display:'Anton',sans-serif;
-  --ff-serif:'Playfair Display',serif;
-  --ff-cond:'Barlow Condensed',sans-serif;
-  --ff-body:'DM Sans',sans-serif;
+  --ink:#08080c;--paper:#f4f0e8;--cream:#faf7f2;--gold:#e8c547;--acid:#c8f53a;
+  --coral:#ff4d4d;--violet:#7c3aed;--cyan:#00d4ff;--muted:rgba(244,240,232,0.5);
+  --ff-display:'Anton',sans-serif;--ff-serif:'Playfair Display',serif;
+  --ff-cond:'Barlow Condensed',sans-serif;--ff-body:'DM Sans',sans-serif;
   --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
-  --ease-in-out:cubic-bezier(0.4,0,0.2,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
-body{background:var(--ink);color:var(--paper);font-family:var(--ff-body);overflow-x:hidden;cursor:none;}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--paper);font-family:var(--ff-body);overflow-x:hidden;cursor:none}
 img{display:block;max-width:100%;height:auto}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:none;border:none;background:none}
+svg{display:block}
 
-#cur{width:12px;height:12px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:exclusion;}
-#cur2{width:36px;height:36px;border:1.5px solid rgba(232,197,71,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:left .1s,top .1s,border-color .2s;}
+#cur{width:12px;height:12px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:exclusion}
+#cur2{width:36px;height:36px;border:1.5px solid rgba(232,197,71,0.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:left .1s,top .1s}
 body:has(a:hover) #cur,body:has(button:hover) #cur{width:24px;height:24px;background:var(--coral)}
 
-#particleCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4;}
-.noise{position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;}
+#particleCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.4}
+.noise{position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(8,8,12,0.7);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(232,197,71,0.15);transition:background .3s;}
-.nav-logo{font-family:var(--ff-display);font-size:1.5rem;letter-spacing:.08em;background:linear-gradient(135deg,var(--gold) 0%,var(--coral) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:0 3rem;height:64px;background:rgba(8,8,12,0.7);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid rgba(232,197,71,0.15);transition:background .3s}
+.nav-logo{font-family:var(--ff-display);font-size:1.5rem;letter-spacing:.08em;background:linear-gradient(135deg,var(--gold),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-links{display:flex;gap:2.5rem;align-items:center}
-.nav-links a{font-family:var(--ff-cond);font-size:.8rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .2s;position:relative;}
-.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s var(--ease-out-expo);}
+.nav-links a{font-family:var(--ff-cond);font-size:.8rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s var(--ease-out-expo)}
 .nav-links a:hover{color:var(--paper)}
 .nav-links a:hover::after{width:100%}
-.nav-pill{background:var(--gold);color:var(--ink);padding:.45rem 1.2rem;font-family:var(--ff-cond);font-size:.75rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border-radius:100px;transition:transform .15s,box-shadow .15s;}
+.nav-pill{background:var(--gold);color:var(--ink);padding:.45rem 1.2rem;font-family:var(--ff-cond);font-size:.75rem;font-weight:800;letter-spacing:.15em;text-transform:uppercase;border-radius:100px;transition:transform .15s,box-shadow .15s}
 .nav-pill:hover{transform:scale(1.04);box-shadow:0 0 20px rgba(232,197,71,0.4)}
 
-.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8rem 3rem 4rem;gap:4rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(232,197,71,0.1);}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;padding:8rem 3rem 4rem;gap:4rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(232,197,71,0.1)}
 .hero-left{position:relative;z-index:2}
-.hero-kicker{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;border:1px solid rgba(232,197,71,0.3);padding:.4rem 1rem;border-radius:100px;}
-.hero-kicker span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 1.4s ease-in-out infinite;}
+.hero-kicker{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;border:1px solid rgba(232,197,71,0.3);padding:.4rem 1rem;border-radius:100px}
+.hero-kicker span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:blink 1.4s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.hero-h1{font-family:var(--ff-display);font-size:clamp(4rem,9vw,9rem);line-height:.9;letter-spacing:.01em;margin-bottom:2rem;}
-.hero-h1 .line{display:block;overflow:hidden;}
-.hero-h1 .line span{display:block;transform:translateY(110%);animation:lineReveal .9s var(--ease-out-expo) forwards;}
+.hero-h1{font-family:var(--ff-display);font-size:clamp(4rem,9vw,9rem);line-height:.9;letter-spacing:.01em;margin-bottom:2rem}
+.hero-h1 .line{display:block;overflow:hidden}
+.hero-h1 .line span{display:block;transform:translateY(110%);animation:lineReveal .9s var(--ease-out-expo) forwards}
 .hero-h1 .line:nth-child(2) span{animation-delay:.1s}
 .hero-h1 .line:nth-child(3) span{animation-delay:.2s}
 @keyframes lineReveal{to{transform:translateY(0)}}
-.hero-h1 .outline{-webkit-text-stroke:2px var(--paper);color:transparent;}
-.hero-h1 .gold{background:linear-gradient(135deg,var(--gold),#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-desc{font-size:1rem;line-height:1.8;color:rgba(244,240,232,0.65);max-width:480px;margin-bottom:2.5rem;}
+.hero-h1 .outline{-webkit-text-stroke:2px var(--paper);color:transparent}
+.hero-h1 .gold{background:linear-gradient(135deg,var(--gold),#f5a623);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:1rem;line-height:1.8;color:rgba(244,240,232,0.65);max-width:480px;margin-bottom:2.5rem}
 .hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
-.btn-primary{display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:var(--ink);padding:.85rem 2rem;font-family:var(--ff-cond);font-size:.8rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden;}
-.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 0%,rgba(255,255,255,0.15) 100%);opacity:0;transition:opacity .2s;}
-.btn-primary:hover::before{opacity:1}
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:var(--ink);padding:.85rem 2rem;font-family:var(--ff-cond);font-size:.8rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:transform .15s,box-shadow .2s;position:relative;overflow:hidden}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(232,197,71,0.35)}
-.btn-outline{display:inline-flex;align-items:center;gap:.6rem;border:1.5px solid rgba(244,240,232,0.3);color:var(--paper);padding:.85rem 2rem;font-family:var(--ff-cond);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:all .2s;}
+.btn-outline{display:inline-flex;align-items:center;gap:.6rem;border:1.5px solid rgba(244,240,232,0.3);color:var(--paper);padding:.85rem 2rem;font-family:var(--ff-cond);font-size:.8rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;transition:all .2s}
 .btn-outline:hover{border-color:var(--paper);background:rgba(244,240,232,0.05)}
-.hero-stats{display:flex;gap:2.5rem;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(244,240,232,0.1);}
-.hstat-num{font-family:var(--ff-display);font-size:2rem;color:var(--gold);line-height:1;margin-bottom:.2rem;}
-.hstat-label{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(244,240,232,0.4);}
+.hero-stats{display:flex;gap:2.5rem;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(244,240,232,0.1)}
+.hstat-num{font-family:var(--ff-display);font-size:2rem;color:var(--gold);line-height:1;margin-bottom:.2rem}
+.hstat-label{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(244,240,232,0.4)}
 
-.hero-right{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1rem;height:560px;}
-.hero-img-card{position:relative;overflow:hidden;border-radius:8px;border:1px solid rgba(244,240,232,0.08);}
-.hero-img-card img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease-out-expo);filter:saturate(0.8);}
-.hero-img-card:hover img{transform:scale(1.06)}
+.hero-right{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1rem;height:560px}
+.hero-img-card{position:relative;overflow:hidden;border-radius:8px;border:1px solid rgba(244,240,232,0.08);background:#111}
+.hero-img-card svg,.hero-img-card canvas{width:100%;height:100%;transition:transform .6s var(--ease-out-expo)}
+.hero-img-card:hover svg,.hero-img-card:hover canvas{transform:scale(1.06)}
 .hero-img-card:first-child{grid-row:span 2}
-.img-label{position:absolute;bottom:.75rem;left:.75rem;font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(8,8,12,0.8);backdrop-filter:blur(8px);color:var(--gold);padding:.3rem .7rem;border-radius:3px;}
-.hero-gradient{position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to top,var(--ink),transparent);z-index:1;pointer-events:none;}
+.img-label{position:absolute;bottom:.75rem;left:.75rem;font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(8,8,12,0.8);backdrop-filter:blur(8px);color:var(--gold);padding:.3rem .7rem;border-radius:3px;z-index:2}
+.hero-gradient{position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to top,var(--ink),transparent);z-index:1;pointer-events:none}
 
-.marquee-wrap{border-top:1px solid rgba(232,197,71,0.2);border-bottom:1px solid rgba(232,197,71,0.2);background:rgba(232,197,71,0.04);overflow:hidden;padding:.9rem 0;}
-.marquee-inner{display:flex;align-items:center;gap:2rem;width:max-content;animation:marquee 28s linear infinite;}
+.marquee-wrap{border-top:1px solid rgba(232,197,71,0.2);border-bottom:1px solid rgba(232,197,71,0.2);background:rgba(232,197,71,0.04);overflow:hidden;padding:.9rem 0}
+.marquee-inner{display:flex;align-items:center;gap:2rem;width:max-content;animation:marquee 28s linear infinite}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.marquee-item{font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.35);white-space:nowrap;display:flex;align-items:center;gap:.8rem;}
+.marquee-item{font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.35);white-space:nowrap;display:flex;align-items:center;gap:.8rem}
 .marquee-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:.6}
 
-.section-eyebrow{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem;}
-.section-eyebrow::before{content:'';display:block;width:28px;height:1.5px;background:var(--gold);}
-.section-title{font-family:var(--ff-display);font-size:clamp(2.5rem,5vw,5rem);line-height:.95;letter-spacing:.01em;margin-bottom:1.25rem;}
-.section-sub{font-size:.9rem;line-height:1.8;color:rgba(244,240,232,0.55);max-width:600px;}
+.section-eyebrow{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+.section-eyebrow::before{content:'';display:block;width:28px;height:1.5px;background:var(--gold)}
+.section-title{font-family:var(--ff-display);font-size:clamp(2.5rem,5vw,5rem);line-height:.95;letter-spacing:.01em;margin-bottom:1.25rem}
+.section-sub{font-size:.9rem;line-height:1.8;color:rgba(244,240,232,0.55);max-width:600px}
 
-.def-section{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid rgba(244,240,232,0.08);}
-.def-left{padding:6rem 3rem;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;}
-.def-left-bg{position:absolute;top:-20%;right:-10%;font-family:var(--ff-display);font-size:20rem;color:rgba(8,8,12,0.04);pointer-events:none;line-height:1;}
-.def-quote{font-family:var(--ff-serif);font-size:clamp(1.3rem,2.2vw,2rem);font-style:italic;line-height:1.5;color:var(--ink);margin-bottom:1.5rem;}
+.def-section{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid rgba(244,240,232,0.08)}
+.def-left{padding:6rem 3rem;background:var(--paper);color:var(--ink);position:relative;overflow:hidden}
+.def-left-bg{position:absolute;top:-20%;right:-10%;font-family:var(--ff-display);font-size:20rem;color:rgba(8,8,12,0.04);pointer-events:none;line-height:1}
+.def-quote{font-family:var(--ff-serif);font-size:clamp(1.3rem,2.2vw,2rem);font-style:italic;line-height:1.5;color:var(--ink);margin-bottom:1.5rem}
 .def-quote strong{font-style:normal;color:var(--coral)}
-.def-cite{font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(8,8,12,0.45);}
-.def-right{padding:6rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-content:center;}
+.def-cite{font-family:var(--ff-cond);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(8,8,12,0.45)}
+.def-right{padding:6rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-content:center}
 .big-stat{border-bottom:1px solid rgba(244,240,232,0.1);padding-bottom:2rem}
 .big-stat:last-child,.big-stat:nth-child(3){border-bottom:none;padding-bottom:0}
-.big-stat-num{font-family:var(--ff-display);font-size:3.5rem;color:var(--gold);line-height:1;margin-bottom:.5rem;}
-.big-stat-label{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(244,240,232,0.45);line-height:1.5;}
+.big-stat-num{font-family:var(--ff-display);font-size:3.5rem;color:var(--gold);line-height:1;margin-bottom:.5rem}
+.big-stat-label{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(244,240,232,0.45);line-height:1.5}
 
-.timeline-section{padding:8rem 0;position:relative;}
-.timeline-header{padding:0 3rem;margin-bottom:5rem;display:flex;align-items:flex-end;justify-content:space-between;}
-.timeline-scroll{overflow-x:auto;padding:0 3rem 3rem;scrollbar-width:thin;scrollbar-color:rgba(232,197,71,0.4) transparent;-webkit-overflow-scrolling:touch;}
+.timeline-section{padding:8rem 0;position:relative}
+.timeline-header{padding:0 3rem;margin-bottom:5rem;display:flex;align-items:flex-end;justify-content:space-between}
+.timeline-scroll{overflow-x:auto;padding:0 3rem 3rem;scrollbar-width:thin;scrollbar-color:rgba(232,197,71,0.4) transparent;-webkit-overflow-scrolling:touch}
 .timeline-scroll::-webkit-scrollbar{height:4px}
-.timeline-scroll::-webkit-scrollbar-track{background:transparent}
 .timeline-scroll::-webkit-scrollbar-thumb{background:rgba(232,197,71,0.4);border-radius:2px}
-.timeline-track{display:flex;gap:1.5px;min-width:max-content;background:rgba(244,240,232,0.06);border:1px solid rgba(244,240,232,0.08);border-radius:8px;overflow:hidden;}
-.tl-card{width:280px;flex-shrink:0;padding:2rem;background:rgba(8,8,12,0.6);border-right:1px solid rgba(244,240,232,0.06);position:relative;overflow:hidden;transition:background .3s;cursor:none;}
-.tl-card:last-child{border-right:none}
+.timeline-track{display:flex;gap:1.5px;min-width:max-content;background:rgba(244,240,232,0.06);border:1px solid rgba(244,240,232,0.08);border-radius:8px;overflow:hidden}
+.tl-card{width:280px;flex-shrink:0;padding:2rem;background:rgba(8,8,12,0.6);border-right:1px solid rgba(244,240,232,0.06);position:relative;overflow:hidden;transition:background .3s;cursor:none}
 .tl-card:hover{background:rgba(20,20,28,0.9)}
-.tl-year{font-family:var(--ff-display);font-size:3.5rem;color:rgba(244,240,232,0.06);line-height:1;margin-bottom:1rem;transition:color .3s;}
+.tl-year{font-family:var(--ff-display);font-size:3.5rem;color:rgba(244,240,232,0.06);line-height:1;margin-bottom:1rem;transition:color .3s}
 .tl-card:hover .tl-year{color:var(--gold)}
-.tl-img{width:100%;height:140px;object-fit:cover;border-radius:4px;margin-bottom:1.25rem;filter:saturate(0.7) brightness(0.85);transition:filter .3s;}
-.tl-card:hover .tl-img{filter:saturate(1) brightness(1)}
-.tl-era{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;opacity:0;transform:translateX(-8px);transition:opacity .3s,transform .3s;}
+.tl-img-wrap{width:100%;height:140px;border-radius:4px;margin-bottom:1.25rem;overflow:hidden;filter:saturate(0.7) brightness(0.85);transition:filter .3s}
+.tl-card:hover .tl-img-wrap{filter:saturate(1) brightness(1)}
+.tl-era{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;opacity:0;transform:translateX(-8px);transition:opacity .3s,transform .3s}
 .tl-card:hover .tl-era{opacity:1;transform:translateX(0)}
-.tl-title{font-family:var(--ff-cond);font-size:1.4rem;font-weight:800;letter-spacing:.02em;line-height:1.1;margin-bottom:.75rem;text-transform:uppercase;}
-.tl-desc{font-size:.75rem;line-height:1.7;color:rgba(244,240,232,0.5);transition:color .3s;}
+.tl-title{font-family:var(--ff-cond);font-size:1.4rem;font-weight:800;letter-spacing:.02em;line-height:1.1;margin-bottom:.75rem;text-transform:uppercase}
+.tl-desc{font-size:.75rem;line-height:1.7;color:rgba(244,240,232,0.5);transition:color .3s}
 .tl-card:hover .tl-desc{color:rgba(244,240,232,0.75)}
-.tl-more{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.25rem;font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s;}
+.tl-more{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.25rem;font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s}
 .tl-card:hover .tl-more{opacity:1;transform:translateY(0)}
-.tl-more-arrow{transition:transform .2s}
-.tl-card:hover .tl-more-arrow{transform:translateX(4px)}
+
+/* MEME CARD IMAGES */
+.meme-img-wrap{width:100%;height:220px;overflow:hidden;position:relative;flex-shrink:0}
+.meme-img-wrap svg{width:100%;height:100%;transition:filter .5s,transform .5s;filter:saturate(0.6) brightness(0.75)}
+.meme-card:hover .meme-img-wrap svg{filter:saturate(1) brightness(0.9);transform:scale(1.05)}
 
 .hof-section{padding:8rem 3rem}
-.hof-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1.5rem;}
+.hof-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1.5rem}
 .filter-bar{display:flex;gap:.5rem;flex-wrap:wrap}
-.filt{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.45rem 1.1rem;border-radius:100px;border:1.5px solid rgba(244,240,232,0.15);color:rgba(244,240,232,0.45);transition:all .2s;cursor:none;}
-.filt.active,.filt:hover{background:var(--gold);color:var(--ink);border-color:var(--gold);}
-.meme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5px;background:rgba(244,240,232,0.06);border:1px solid rgba(244,240,232,0.06);}
-.meme-card{background:var(--ink);position:relative;overflow:hidden;cursor:none;transition:transform .4s var(--ease-out-expo);}
+.filt{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.45rem 1.1rem;border-radius:100px;border:1.5px solid rgba(244,240,232,0.15);color:rgba(244,240,232,0.45);transition:all .2s;cursor:none}
+.filt.active,.filt:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.meme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5px;background:rgba(244,240,232,0.06);border:1px solid rgba(244,240,232,0.06)}
+.meme-card{background:var(--ink);position:relative;overflow:hidden;cursor:none;display:flex;flex-direction:column}
 .meme-card.hidden{display:none}
-.meme-thumb{width:100%;height:220px;object-fit:cover;filter:saturate(0.6) brightness(0.75);transition:filter .5s var(--ease-out-expo),transform .5s var(--ease-out-expo);display:block;}
-.meme-card:hover .meme-thumb{filter:saturate(1) brightness(0.9);transform:scale(1.05);}
+.meme-overlay{position:absolute;inset:0;height:220px;background:linear-gradient(to top,rgba(8,8,12,0.8) 0%,transparent 60%);pointer-events:none;z-index:1}
+.meme-tag{position:absolute;top:1rem;left:1rem;font-family:var(--ff-cond);font-size:.55rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(8,8,12,0.75);backdrop-filter:blur(8px);color:var(--gold);padding:.3rem .65rem;border-radius:3px;border:1px solid rgba(232,197,71,0.2);z-index:2}
 .meme-info{padding:1.5rem}
-.meme-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
-.meme-cat{font-family:var(--ff-cond);font-size:.55rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);}
-.meme-year{font-family:var(--ff-cond);font-size:.55rem;letter-spacing:.1em;color:rgba(244,240,232,0.3);}
-.meme-name{font-family:var(--ff-cond);font-size:1.5rem;font-weight:800;letter-spacing:.01em;text-transform:uppercase;margin-bottom:.5rem;line-height:1.1;}
-.meme-desc{font-size:.75rem;line-height:1.7;color:rgba(244,240,232,0.5);}
-.meme-overlay{position:absolute;inset:0;height:220px;background:linear-gradient(to top,rgba(8,8,12,0.8) 0%,transparent 60%);pointer-events:none;}
-.meme-tag{position:absolute;top:1rem;left:1rem;font-family:var(--ff-cond);font-size:.55rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:rgba(8,8,12,0.75);backdrop-filter:blur(8px);color:var(--gold);padding:.3rem .65rem;border-radius:3px;border:1px solid rgba(232,197,71,0.2);}
+.meme-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem}
+.meme-cat{font-family:var(--ff-cond);font-size:.55rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.meme-year{font-family:var(--ff-cond);font-size:.55rem;letter-spacing:.1em;color:rgba(244,240,232,0.3)}
+.meme-name{font-family:var(--ff-cond);font-size:1.5rem;font-weight:800;letter-spacing:.01em;text-transform:uppercase;margin-bottom:.5rem;line-height:1.1}
+.meme-desc{font-size:.75rem;line-height:1.7;color:rgba(244,240,232,0.5)}
 
-.impact-section{padding:8rem 3rem;background:var(--paper);color:var(--ink);position:relative;overflow:hidden;}
-.impact-bg{position:absolute;top:0;right:0;width:50%;height:100%;background:var(--ink);clip-path:polygon(15% 0,100% 0,100% 100%,0% 100%);}
-.impact-inner{position:relative;z-index:1;max-width:1400px;margin:0 auto;}
+.impact-section{padding:8rem 3rem;background:var(--paper);color:var(--ink);position:relative;overflow:hidden}
+.impact-bg{position:absolute;top:0;right:0;width:50%;height:100%;background:var(--ink);clip-path:polygon(15% 0,100% 0,100% 100%,0% 100%)}
+.impact-inner{position:relative;z-index:1;max-width:1400px;margin:0 auto}
 .impact-header{margin-bottom:4rem}
 .impact-header .section-eyebrow{color:var(--coral)}
 .impact-header .section-eyebrow::before{background:var(--coral)}
-.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
-.impact-card{background:var(--ink);color:var(--paper);padding:2.5rem;border-radius:6px;border:1px solid rgba(244,240,232,0.06);position:relative;overflow:hidden;transition:transform .3s var(--ease-out-expo),border-color .3s;cursor:none;}
-.impact-card:hover{transform:translateY(-4px);border-color:rgba(232,197,71,0.3);}
-.impact-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--coral));transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease-out-expo);}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.impact-card{background:var(--ink);color:var(--paper);padding:2.5rem;border-radius:6px;border:1px solid rgba(244,240,232,0.06);position:relative;overflow:hidden;transition:transform .3s var(--ease-out-expo),border-color .3s;cursor:none}
+.impact-card:hover{transform:translateY(-4px);border-color:rgba(232,197,71,0.3)}
+.impact-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--coral));transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease-out-expo)}
 .impact-card:hover::after{transform:scaleX(1)}
-.impact-num{font-family:var(--ff-display);font-size:3.5rem;color:var(--gold);line-height:1;margin-bottom:.25rem;}
-.impact-label{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.3);margin-bottom:1.5rem;}
-.impact-card h3{font-family:var(--ff-cond);font-size:1.25rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem;}
-.impact-card p{font-size:.78rem;line-height:1.8;color:rgba(244,240,232,0.55);}
+.impact-num{font-family:var(--ff-display);font-size:3.5rem;color:var(--gold);line-height:1;margin-bottom:.25rem}
+.impact-label{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.3);margin-bottom:1.5rem}
+.impact-card h3{font-family:var(--ff-cond);font-size:1.25rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem}
+.impact-card p{font-size:.78rem;line-height:1.8;color:rgba(244,240,232,0.55)}
 
-.gen-section{padding:8rem 3rem;background:linear-gradient(135deg,rgba(232,197,71,0.05) 0%,transparent 60%);border-top:1px solid rgba(232,197,71,0.1);}
-.gen-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;max-width:1100px;margin:0 auto;}
-.gen-header{margin-bottom:2.5rem}
-.gen-label{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(244,240,232,0.4);margin-bottom:.75rem;display:block;margin-top:1.5rem;}
+.gen-section{padding:8rem 3rem;background:linear-gradient(135deg,rgba(232,197,71,0.05) 0%,transparent 60%);border-top:1px solid rgba(232,197,71,0.1)}
+.gen-inner{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;max-width:1100px;margin:0 auto}
+.gen-label{font-family:var(--ff-cond);font-size:.65rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:rgba(244,240,232,0.4);margin-bottom:.75rem;display:block;margin-top:1.5rem}
 .gen-label:first-of-type{margin-top:0}
 .tmpl-row{display:flex;gap:.5rem;flex-wrap:wrap}
-.tmpl-btn{width:48px;height:48px;border-radius:6px;background:rgba(244,240,232,0.06);border:1.5px solid rgba(244,240,232,0.08);font-size:1.5rem;transition:all .2s;cursor:none;display:flex;align-items:center;justify-content:center;}
-.tmpl-btn:hover,.tmpl-btn.sel{background:rgba(232,197,71,0.12);border-color:var(--gold);transform:scale(1.1);}
-.gen-input{width:100%;background:rgba(244,240,232,0.04);border:1.5px solid rgba(244,240,232,0.12);border-radius:4px;color:var(--paper);padding:.85rem 1.1rem;font-family:var(--ff-cond);font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-top:.3rem;}
+.tmpl-btn{width:48px;height:48px;border-radius:6px;background:rgba(244,240,232,0.06);border:1.5px solid rgba(244,240,232,0.08);font-size:1.5rem;transition:all .2s;cursor:none;display:flex;align-items:center;justify-content:center}
+.tmpl-btn:hover,.tmpl-btn.sel{background:rgba(232,197,71,0.12);border-color:var(--gold);transform:scale(1.1)}
+.gen-input{width:100%;background:rgba(244,240,232,0.04);border:1.5px solid rgba(244,240,232,0.12);border-radius:4px;color:var(--paper);padding:.85rem 1.1rem;font-family:var(--ff-cond);font-size:.9rem;letter-spacing:.05em;text-transform:uppercase;outline:none;transition:border-color .2s;margin-top:.3rem}
 .gen-input:focus{border-color:var(--gold)}
 .gen-input::placeholder{color:rgba(244,240,232,0.2)}
 .gen-btns{display:flex;gap:.75rem;margin-top:1.75rem;flex-wrap:wrap}
-.btn-rand{display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid rgba(244,240,232,0.2);color:var(--paper);padding:.8rem 1.5rem;border-radius:4px;font-family:var(--ff-cond);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:all .2s;cursor:none;}
+.btn-rand{display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid rgba(244,240,232,0.2);color:var(--paper);padding:.8rem 1.5rem;border-radius:4px;font-family:var(--ff-cond);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transition:all .2s;cursor:none}
 .btn-rand:hover{border-color:var(--paper);background:rgba(244,240,232,0.05)}
-.meme-canvas-wrap{position:sticky;top:5rem;}
-.meme-preview{position:relative;border-radius:8px;overflow:hidden;background:#1a1a22;border:1px solid rgba(244,240,232,0.08);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1.25rem;}
-.preview-emoji{position:relative;z-index:2;font-size:7rem;flex:1;display:flex;align-items:center;justify-content:center;transition:transform .3s;}
+.meme-canvas-wrap{position:sticky;top:5rem}
+.meme-preview{position:relative;border-radius:8px;overflow:hidden;background:#1a1a22;border:1px solid rgba(244,240,232,0.08);aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1.25rem}
+.preview-emoji{font-size:7rem;flex:1;display:flex;align-items:center;justify-content:center;transition:transform .3s}
 .meme-preview:hover .preview-emoji{transform:scale(1.1) rotate(5deg)}
-.meme-text{position:relative;z-index:2;font-family:var(--ff-display);font-size:1.6rem;letter-spacing:.04em;text-align:center;line-height:1.2;text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,3px 3px 8px rgba(0,0,0,0.5);max-width:100%;word-break:break-word;}
-.btn-copy{width:100%;margin-top:1rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(232,197,71,0.1);color:var(--gold);border:1.5px solid rgba(232,197,71,0.3);padding:.85rem;border-radius:4px;font-family:var(--ff-cond);font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;cursor:none;}
+.meme-text{font-family:var(--ff-display);font-size:1.6rem;letter-spacing:.04em;text-align:center;line-height:1.2;text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;max-width:100%;word-break:break-word}
+.btn-copy{width:100%;margin-top:1rem;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;background:rgba(232,197,71,0.1);color:var(--gold);border:1.5px solid rgba(232,197,71,0.3);padding:.85rem;border-radius:4px;font-family:var(--ff-cond);font-size:.75rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;cursor:none}
 .btn-copy:hover{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 
-.quiz-section{padding:8rem 3rem;background:#060608;border-top:1px solid rgba(244,240,232,0.06);}
+.quiz-section{padding:8rem 3rem;background:#060608;border-top:1px solid rgba(244,240,232,0.06)}
 .quiz-wrap{max-width:720px;margin:4rem auto 0}
-.quiz-shell{background:rgba(244,240,232,0.02);border:1px solid rgba(244,240,232,0.08);border-radius:10px;overflow:hidden;}
-.quiz-top-bar{background:rgba(244,240,232,0.04);border-bottom:1px solid rgba(244,240,232,0.06);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;}
+.quiz-shell{background:rgba(244,240,232,0.02);border:1px solid rgba(244,240,232,0.08);border-radius:10px;overflow:hidden}
+.quiz-top-bar{background:rgba(244,240,232,0.04);border-bottom:1px solid rgba(244,240,232,0.06);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
 .quiz-dots{display:flex;gap:.4rem}
 .qdot{width:10px;height:10px;border-radius:50%;background:rgba(244,240,232,0.12)}
 .qdot:nth-child(1){background:#ff5f57}.qdot:nth-child(2){background:#febc2e}.qdot:nth-child(3){background:#28c840}
-.quiz-prog-text{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.2em;color:rgba(244,240,232,0.3);}
-.quiz-prog-bar-wrap{height:3px;background:rgba(244,240,232,0.08);}
-.quiz-prog-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .5s var(--ease-out-expo);width:0%;}
+.quiz-prog-text{font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.2em;color:rgba(244,240,232,0.3)}
+.quiz-prog-bar-wrap{height:3px;background:rgba(244,240,232,0.08)}
+.quiz-prog-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--coral));transition:width .5s var(--ease-out-expo);width:0%}
 .quiz-body{padding:2.5rem 2rem}
-.quiz-q-num{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;}
-.quiz-question{font-family:var(--ff-serif);font-size:1.5rem;font-weight:700;line-height:1.35;margin-bottom:2rem;}
+.quiz-q-num{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
+.quiz-question{font-family:var(--ff-serif);font-size:1.5rem;font-weight:700;line-height:1.35;margin-bottom:2rem}
 .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.qopt{background:rgba(244,240,232,0.03);border:1.5px solid rgba(244,240,232,0.1);border-radius:6px;padding:1rem 1.25rem;font-family:var(--ff-body);font-size:.8rem;line-height:1.4;color:var(--paper);text-align:left;transition:all .2s;cursor:none;}
-.qopt:hover:not(:disabled){background:rgba(232,197,71,0.06);border-color:rgba(232,197,71,0.4);}
+.qopt{background:rgba(244,240,232,0.03);border:1.5px solid rgba(244,240,232,0.1);border-radius:6px;padding:1rem 1.25rem;font-family:var(--ff-body);font-size:.8rem;line-height:1.4;color:var(--paper);text-align:left;transition:all .2s;cursor:none}
+.qopt:hover:not(:disabled){background:rgba(232,197,71,0.06);border-color:rgba(232,197,71,0.4)}
 .qopt.correct{background:rgba(0,212,0,0.1);border-color:#00d464;color:#00d464}
 .qopt.wrong{background:rgba(255,77,77,0.1);border-color:var(--coral);color:var(--coral)}
 .qopt:disabled{cursor:not-allowed}
-.quiz-fact{margin-top:1.5rem;padding:1.25rem;background:rgba(232,197,71,0.05);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;font-size:.78rem;line-height:1.8;color:rgba(244,240,232,0.7);display:none;}
+.quiz-fact{margin-top:1.5rem;padding:1.25rem;background:rgba(232,197,71,0.05);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;font-size:.78rem;line-height:1.8;color:rgba(244,240,232,0.7);display:none}
 .quiz-fact.show{display:block}
-.quiz-next{margin-top:1.5rem;display:none;}
+.quiz-next{margin-top:1.5rem;display:none}
 .quiz-next.show{display:block}
-.result-big{font-family:var(--ff-display);font-size:6rem;color:var(--gold);line-height:1;margin-bottom:.5rem;}
-.result-tag{font-family:var(--ff-cond);font-size:2rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem;}
-.result-msg{font-size:.85rem;line-height:1.8;color:rgba(244,240,232,0.55);margin-bottom:2rem;}
+.result-big{font-family:var(--ff-display);font-size:6rem;color:var(--gold);line-height:1;margin-bottom:.5rem}
+.result-tag{font-family:var(--ff-cond);font-size:2rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.75rem}
+.result-msg{font-size:.85rem;line-height:1.8;color:rgba(244,240,232,0.55);margin-bottom:2rem}
 
-footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240,232,0.08);display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
-.footer-logo{font-family:var(--ff-display);font-size:4rem;line-height:.9;margin-bottom:1rem;background:linear-gradient(135deg,var(--gold) 0%,var(--coral) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.footer-sub{font-size:.8rem;line-height:1.8;color:rgba(244,240,232,0.4);max-width:380px;}
+footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240,232,0.08);display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.footer-logo{font-family:var(--ff-display);font-size:4rem;line-height:.9;margin-bottom:1rem;background:linear-gradient(135deg,var(--gold),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-sub{font-size:.8rem;line-height:1.8;color:rgba(244,240,232,0.4);max-width:380px}
 .footer-right{text-align:right}
-.footer-emojis{font-size:2rem;letter-spacing:.5rem;margin-bottom:1rem;animation:float 4s ease-in-out infinite;}
+.footer-emojis{font-size:2rem;letter-spacing:.5rem;margin-bottom:1rem;animation:float 4s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.footer-copy{font-family:var(--ff-cond);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.2);}
+.footer-copy{font-family:var(--ff-cond);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(244,240,232,0.2)}
 
-.modal-bg{position:fixed;inset:0;z-index:2000;background:rgba(8,8,12,0.92);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.modal-bg{position:fixed;inset:0;z-index:2000;background:rgba(8,8,12,0.92);backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:center;justify-content:center;padding:2rem}
 .modal-bg.open{opacity:1;pointer-events:all}
-.modal-box{background:#10101a;border:1px solid rgba(244,240,232,0.1);border-radius:12px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;transform:scale(.94) translateY(16px);transition:transform .35s var(--ease-out-expo);}
+.modal-box{background:#10101a;border:1px solid rgba(244,240,232,0.1);border-radius:12px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;transform:scale(.94) translateY(16px);transition:transform .35s var(--ease-out-expo)}
 .modal-bg.open .modal-box{transform:scale(1) translateY(0)}
-.modal-hero-img{width:100%;height:220px;object-fit:cover;border-radius:10px 10px 0 0;filter:brightness(0.7) saturate(0.8);}
+.modal-img-wrap{width:100%;height:220px;overflow:hidden;border-radius:10px 10px 0 0}
+.modal-img-wrap svg{width:100%;height:100%;filter:brightness(0.75)}
 .modal-content{padding:2.5rem}
-.modal-close-btn{position:sticky;float:right;width:36px;height:36px;border-radius:50%;background:rgba(244,240,232,0.1);backdrop-filter:blur(8px);color:var(--paper);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s;cursor:none;border:none;}
+.modal-close-btn{position:sticky;float:right;width:36px;height:36px;border-radius:50%;background:rgba(244,240,232,0.1);color:var(--paper);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s;cursor:none;border:none}
 .modal-close-btn:hover{background:var(--coral)}
-.modal-era-tag{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;}
-.modal-title{font-family:var(--ff-display);font-size:3rem;margin-bottom:1.25rem;color:var(--gold);line-height:1;}
-.modal-body{font-size:.82rem;line-height:1.9;color:rgba(244,240,232,0.7);margin-bottom:2rem;}
+.modal-era-tag{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem}
+.modal-title{font-family:var(--ff-display);font-size:3rem;margin-bottom:1.25rem;color:var(--gold);line-height:1}
+.modal-body{font-size:.82rem;line-height:1.9;color:rgba(244,240,232,0.7);margin-bottom:2rem}
 .modal-chips{display:flex;flex-wrap:wrap;gap:.5rem}
-.chip{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(232,197,71,0.1);color:var(--gold);border:1px solid rgba(232,197,71,0.25);padding:.3rem .8rem;border-radius:3px;}
+.chip{font-family:var(--ff-cond);font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:rgba(232,197,71,0.1);color:var(--gold);border:1px solid rgba(232,197,71,0.25);padding:.3rem .8rem;border-radius:3px}
 
 .sr{opacity:0;transform:translateY(32px);transition:opacity .7s var(--ease-out-expo),transform .7s var(--ease-out-expo)}
 .sr.in{opacity:1;transform:translateY(0)}
 .sr-d1{transition-delay:.1s}.sr-d2{transition-delay:.2s}.sr-d3{transition-delay:.3s}
-.sr-d4{transition-delay:.4s}.sr-d5{transition-delay:.5s}
 
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:var(--ink)}
@@ -256,18 +244,13 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
 @media(max-width:768px){
   nav{padding:0 1.5rem}
   .hero{padding:6rem 1.5rem 3rem}
-  .def-left,.def-right,.timeline-section,.hof-section,.impact-section,.gen-section,.quiz-section{padding-left:1.5rem;padding-right:1.5rem}
-  .timeline-header,.timeline-scroll{padding-left:1.5rem;padding-right:1.5rem}
   .impact-bg{display:none}
   .impact-grid{grid-template-columns:1fr}
   .quiz-opts{grid-template-columns:1fr}
-  .def-right{grid-template-columns:1fr 1fr}
-  footer{padding:3rem 1.5rem}
 }
 </style>
 </head>
 <body>
-
 <canvas id="particleCanvas"></canvas>
 <div class="noise"></div>
 <div id="cur"></div>
@@ -304,25 +287,7 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
       <div><div class="hstat-num">$88B</div><div class="hstat-label">Peak Dogecoin<br>market cap</div></div>
     </div>
   </div>
-  <div class="hero-right">
-    <!-- Doge - real Wikipedia image -->
-    <div class="hero-img-card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/640px-Doge_meme.jpg" alt="Doge meme - original Shiba Inu photo"/>
-      <div class="img-label">Doge · 2013</div>
-    </div>
-    <!-- Distracted Boyfriend -->
-    <div class="hero-img-card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Distracted_Boyfriend.jpg/640px-Distracted_Boyfriend.jpg" alt="Distracted Boyfriend meme"
-           onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg'"/>
-      <div class="img-label">Distracted BF · 2017</div>
-    </div>
-    <!-- Grumpy Cat -->
-    <div class="hero-img-card">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/No_longer_Grumpy_Cat_%28Tardar_Sauce%29.jpg/480px-No_longer_Grumpy_Cat_%28Tardar_Sauce%29.jpg" alt="Grumpy Cat"
-           onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg'"/>
-      <div class="img-label">Grumpy Cat · 2012</div>
-    </div>
-  </div>
+  <div class="hero-right" id="heroRight"></div>
   <div class="hero-gradient"></div>
 </section>
 
@@ -341,7 +306,7 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
     <div class="big-stat sr"><div class="big-stat-num" id="cnt1">0</div><div class="big-stat-label">Memes shared<br>every day globally</div></div>
     <div class="big-stat sr sr-d1"><div class="big-stat-num" id="cnt2">0</div><div class="big-stat-label">Year Dawkins coined<br>the word "meme"</div></div>
     <div class="big-stat sr sr-d2"><div class="big-stat-num" id="cnt3">0%</div><div class="big-stat-label">of Gen Z learn<br>news via memes</div></div>
-    <div class="big-stat sr sr-d3"><div class="big-stat-num" id="cnt4">0</div><div class="big-stat-label">Hours — avg meme<br>lifespan (days)</div></div>
+    <div class="big-stat sr sr-d3"><div class="big-stat-num" id="cnt4">0</div><div class="big-stat-label">Avg meme lifespan<br>(days)</div></div>
   </div>
 </section>
 
@@ -416,7 +381,7 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
     <div class="section-sub" style="margin:0 auto;text-align:center">The definitive meme literacy test</div>
   </div>
   <div class="quiz-wrap">
-    <div class="quiz-shell" id="quizShell">
+    <div class="quiz-shell">
       <div class="quiz-top-bar">
         <div class="quiz-dots"><div class="qdot"></div><div class="qdot"></div><div class="qdot"></div></div>
         <div class="quiz-prog-text" id="qProgText">Question 1 of 8</div>
@@ -439,8 +404,8 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
 </footer>
 
 <div class="modal-bg" id="modalBg">
-  <div class="modal-box" id="modalBox">
-    <img class="modal-hero-img" id="mImg" src="" alt=""/>
+  <div class="modal-box">
+    <div class="modal-img-wrap" id="mImgWrap"></div>
     <div class="modal-content">
       <button class="modal-close-btn" id="modalClose">✕</button>
       <div class="modal-era-tag" id="mEra"></div>
@@ -453,384 +418,1025 @@ footer{padding:5rem 3rem;background:var(--ink);border-top:1px solid rgba(244,240
 </div>
 
 <script>
-// ── CURSOR
-const cur = document.getElementById('cur');
-const cur2 = document.getElementById('cur2');
-let mx = 0, my = 0, cx = 0, cy = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-(function animateCursor() {
-  cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15;
-  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
-  cur2.style.left = cx + 'px'; cur2.style.top = cy + 'px';
-  requestAnimationFrame(animateCursor);
-})();
-document.addEventListener('mousedown', () => { cur.style.transform = 'translate(-50%,-50%) scale(1.6)'; });
-document.addEventListener('mouseup', () => { cur.style.transform = 'translate(-50%,-50%) scale(1)'; });
+// ─── SVG MEME ILLUSTRATIONS ───────────────────────────────────────────────
+// Each returns an SVG string that renders a recognizable meme scene
 
-// ── PARTICLE CANVAS
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
-let W, H, particles = [];
-function resizeCanvas() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random()*W; this.y = Math.random()*H;
-    this.r = Math.random()*1.5+0.3;
-    this.vx = (Math.random()-.5)*.25; this.vy = (Math.random()-.5)*.25;
-    this.alpha = Math.random()*.4+.1;
-    const hues = ['232,197,71','255,77,77','0,212,255','200,245,58'];
-    this.color = hues[Math.floor(Math.random()*hues.length)];
-  }
-  update() { this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset(); }
-  draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=`rgba(${this.color},${this.alpha})`; ctx.fill(); }
-}
-for(let i=0;i<120;i++) particles.push(new Particle());
-(function animateParticles() {
-  ctx.clearRect(0,0,W,H);
-  particles.forEach(p=>{p.update();p.draw();});
-  for(let i=0;i<particles.length;i++){
-    for(let j=i+1;j<particles.length;j++){
-      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<90){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(232,197,71,${0.06*(1-dist/90)})`;ctx.lineWidth=0.5;ctx.stroke();}
-    }
-  }
-  requestAnimationFrame(animateParticles);
-})();
+const MEME_SVG = {
 
-// ── MARQUEE
-const marqueeItems=['🐸 Pepe the Frog','💀 Doomscrolling','😂 Touch Grass','🔥 This Is Fine','🧀 Gouda Content','💅 No Cap Fr','🐕 Such Wow','👁️ Side-Eye Chloe','📈 Stonks Only Go Up','🌽 It\'s Corn','🎻 Woman Yelling At Cat','🤌 Chefs Kiss','🦁 RIP Harambe','🥺 Pleading Face'];
+  doge: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#c8a96e"/>
+    <ellipse cx="200" cy="165" rx="95" ry="100" fill="#d4a85a"/>
+    <ellipse cx="200" cy="160" rx="88" ry="90" fill="#e8c07a"/>
+    <ellipse cx="172" cy="145" rx="18" ry="22" fill="#f5d090"/>
+    <ellipse cx="228" cy="145" rx="18" ry="22" fill="#f5d090"/>
+    <circle cx="172" cy="148" r="12" fill="#3d2b1f"/>
+    <circle cx="228" cy="148" r="12" fill="#3d2b1f"/>
+    <circle cx="175" cy="145" r="5" fill="#111"/>
+    <circle cx="231" cy="145" r="5" fill="#111"/>
+    <circle cx="177" cy="143" r="2" fill="white"/>
+    <circle cx="233" cy="143" r="2" fill="white"/>
+    <ellipse cx="200" cy="175" rx="18" ry="10" fill="#c8956a"/>
+    <path d="M185 182 Q200 192 215 182" stroke="#a06040" stroke-width="2" fill="none"/>
+    <ellipse cx="160" cy="130" rx="22" ry="30" fill="#d4a85a" transform="rotate(-15 160 130)"/>
+    <ellipse cx="240" cy="130" rx="22" ry="30" fill="#d4a85a" transform="rotate(15 240 130)"/>
+    <ellipse cx="160" cy="130" rx="14" ry="20" fill="#e8b0b0" transform="rotate(-15 160 130)"/>
+    <ellipse cx="240" cy="130" rx="14" ry="20" fill="#e8b0b0" transform="rotate(15 240 130)"/>
+    <text x="30" y="50" font-family="Comic Sans MS,cursive" font-size="18" fill="#ffd700" transform="rotate(-10 30 50)">wow</text>
+    <text x="290" y="70" font-family="Comic Sans MS,cursive" font-size="16" fill="#00d4ff" transform="rotate(8 290 70)">such meme</text>
+    <text x="20" y="200" font-family="Comic Sans MS,cursive" font-size="15" fill="#ff6eb4" transform="rotate(-5 20 200)">very viral</text>
+    <text x="270" y="220" font-family="Comic Sans MS,cursive" font-size="14" fill="#c8f53a" transform="rotate(6 270 220)">much wow</text>
+    <text x="80" y="270" font-family="Comic Sans MS,cursive" font-size="13" fill="#ff9944" transform="rotate(-3 80 270)">so internet</text>
+  </svg>`,
+
+  thisisfine: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#1a0a00"/>
+    <rect x="0" y="180" width="400" height="120" fill="#2a0a00"/>
+    <rect x="0" y="0" width="400" height="200" fill="#ff4400" opacity="0.3"/>
+    <!-- flames -->
+    <ellipse cx="60" cy="200" rx="30" ry="50" fill="#ff6600" opacity="0.9"/>
+    <ellipse cx="60" cy="190" rx="18" ry="35" fill="#ffaa00"/>
+    <ellipse cx="130" cy="195" rx="25" ry="45" fill="#ff5500" opacity="0.9"/>
+    <ellipse cx="130" cy="183" rx="14" ry="30" fill="#ffbb00"/>
+    <ellipse cx="200" cy="198" rx="28" ry="48" fill="#ff6600" opacity="0.9"/>
+    <ellipse cx="200" cy="186" rx="16" ry="32" fill="#ffaa00"/>
+    <ellipse cx="270" cy="193" rx="26" ry="46" fill="#ff4400" opacity="0.9"/>
+    <ellipse cx="270" cy="181" rx="15" ry="31" fill="#ffcc00"/>
+    <ellipse cx="340" cy="200" rx="30" ry="50" fill="#ff6600" opacity="0.9"/>
+    <ellipse cx="340" cy="188" rx="17" ry="34" fill="#ffaa00"/>
+    <!-- table -->
+    <rect x="60" y="200" width="280" height="15" fill="#8B4513" rx="4"/>
+    <rect x="70" y="215" width="12" height="60" fill="#6B3410"/>
+    <rect x="318" y="215" width="12" height="60" fill="#6B3410"/>
+    <!-- dog body -->
+    <ellipse cx="200" cy="195" rx="35" ry="25" fill="#e8c07a"/>
+    <circle cx="200" cy="172" r="22" fill="#e8c07a"/>
+    <!-- dog face -->
+    <circle cx="193" cy="168" r="5" fill="#2a1a0a"/>
+    <circle cx="207" cy="168" r="5" fill="#2a1a0a"/>
+    <ellipse cx="200" cy="176" rx="8" ry="5" fill="#c8906a"/>
+    <path d="M193 182 Q200 188 207 182" stroke="#8a5040" stroke-width="2" fill="none"/>
+    <!-- cup -->
+    <rect x="220" y="183" width="22" height="18" fill="#f0f0f0" rx="2"/>
+    <path d="M230 183 Q235 175 240 183" stroke="#f0f0f0" stroke-width="3" fill="none"/>
+    <!-- speech bubble -->
+    <rect x="100" y="100" width="200" height="50" fill="white" rx="8"/>
+    <polygon points="160,150 175,150 168,165" fill="white"/>
+    <text x="200" y="132" font-family="Arial,sans-serif" font-size="16" font-weight="bold" fill="#1a0a00" text-anchor="middle">This is fine.</text>
+  </svg>`,
+
+  distracted: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#87ceeb"/>
+        <stop offset="100%" stop-color="#c8e8f8"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#sky)"/>
+    <rect x="0" y="220" width="400" height="80" fill="#8BC34A"/>
+    <!-- road -->
+    <rect x="0" y="210" width="400" height="30" fill="#666"/>
+    <rect x="180" y="215" width="40" height="8" fill="#fff" rx="2"/>
+    <!-- girlfriend (left, walking away) -->
+    <circle cx="100" cy="160" r="18" fill="#ffcc99"/>
+    <rect x="88" y="178" width="24" height="40" fill="#e74c3c"/>
+    <rect x="88" y="215" width="10" height="20" fill="#2c3e50"/>
+    <rect x="102" y="215" width="10" height="20" fill="#2c3e50"/>
+    <ellipse cx="100" cy="148" rx="20" ry="12" fill="#8B4513"/>
+    <!-- looking-back text label -->
+    <rect x="50" y="118" width="100" height="26" fill="#ffff00" rx="4"/>
+    <text x="100" y="135" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#111" text-anchor="middle">GIRLFRIEND</text>
+    <!-- the man turning -->
+    <circle cx="220" cy="155" r="18" fill="#ffcc99"/>
+    <rect x="208" y="173" width="24" height="40" fill="#3498db"/>
+    <rect x="208" y="210" width="10" height="20" fill="#1a252f"/>
+    <rect x="222" y="210" width="10" height="20" fill="#1a252f"/>
+    <!-- man's head turned left -->
+    <ellipse cx="220" cy="143" rx="12" ry="8" fill="#5a3a1a"/>
+    <!-- arm pointing right -->
+    <line x1="232" y1="185" x2="290" y2="175" stroke="#ffcc99" stroke-width="8" stroke-linecap="round"/>
+    <!-- new girl walking (right) -->
+    <circle cx="310" cy="162" r="18" fill="#ffcc99"/>
+    <rect x="298" y="180" width="24" height="38" fill="#9b59b6"/>
+    <rect x="298" y="215" width="10" height="20" fill="#2c3e50"/>
+    <rect x="312" y="215" width="10" height="20" fill="#2c3e50"/>
+    <ellipse cx="310" cy="150" rx="22" ry="12" fill="#c0392b"/>
+    <rect x="258" y="120" width="104" height="26" fill="#ffff00" rx="4"/>
+    <text x="310" y="137" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="#111" text-anchor="middle">SOMETHING NEW</text>
+    <rect x="185" y="120" width="70" height="26" fill="#ffff00" rx="4"/>
+    <text x="220" y="137" font-family="Arial,sans-serif" font-size="10" font-weight="bold" fill="#111" text-anchor="middle">THE MAN</text>
+  </svg>`,
+
+  grumpycat: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a1a2e"/>
+        <stop offset="100%" stop-color="#16213e"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#bg)"/>
+    <!-- Impact font top text -->
+    <text x="200" y="38" font-family="Impact,Arial Black,sans-serif" font-size="32" font-weight="bold" fill="white" text-anchor="middle" stroke="#000" stroke-width="3" paint-order="stroke">NO.</text>
+    <!-- Cat face -->
+    <ellipse cx="200" cy="175" rx="110" ry="100" fill="#c8a87a"/>
+    <ellipse cx="155" cy="155" rx="35" ry="42" fill="#c8a87a"/>
+    <ellipse cx="245" cy="155" rx="35" ry="42" fill="#c8a87a"/>
+    <ellipse cx="155" cy="155" rx="24" ry="30" fill="#e8c090" transform="rotate(-5 155 155)"/>
+    <ellipse cx="245" cy="155" rx="24" ry="30" fill="#e8c090" transform="rotate(5 245 155)"/>
+    <!-- grumpy brow lines -->
+    <line x1="155" y1="128" x2="185" y2="138" stroke="#7a5a3a" stroke-width="5" stroke-linecap="round"/>
+    <line x1="245" y1="128" x2="215" y2="138" stroke="#7a5a3a" stroke-width="5" stroke-linecap="round"/>
+    <!-- eyes (downturned) -->
+    <ellipse cx="172" cy="162" rx="18" ry="14" fill="#ddd"/>
+    <ellipse cx="228" cy="162" rx="18" ry="14" fill="#ddd"/>
+    <ellipse cx="172" cy="164" rx="11" ry="12" fill="#3a8a3a"/>
+    <ellipse cx="228" cy="164" rx="11" ry="12" fill="#3a8a3a"/>
+    <circle cx="172" cy="164" r="7" fill="#111"/>
+    <circle cx="228" cy="164" r="7" fill="#111"/>
+    <circle cx="174" cy="161" r="2.5" fill="white"/>
+    <circle cx="230" cy="161" r="2.5" fill="white"/>
+    <!-- flat grumpy mouth -->
+    <path d="M175 205 Q200 198 225 205" stroke="#8a5a3a" stroke-width="3" fill="none"/>
+    <!-- nose -->
+    <path d="M196 190 L200 195 L204 190" fill="#c87a5a"/>
+    <!-- whiskers -->
+    <line x1="90" y1="190" x2="160" y2="195" stroke="#8a7a5a" stroke-width="1.5"/>
+    <line x1="90" y1="200" x2="160" y2="200" stroke="#8a7a5a" stroke-width="1.5"/>
+    <line x1="240" y1="195" x2="310" y2="190" stroke="#8a7a5a" stroke-width="1.5"/>
+    <line x1="240" y1="200" x2="310" y2="200" stroke="#8a7a5a" stroke-width="1.5"/>
+    <!-- fur markings -->
+    <ellipse cx="200" cy="185" rx="55" ry="40" fill="#b89060" opacity="0.3"/>
+    <text x="200" y="280" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="bold" fill="white" text-anchor="middle" stroke="#000" stroke-width="3" paint-order="stroke">I HAD FUN ONCE.</text>
+    <text x="200" y="295" font-family="Impact,sans-serif" font-size="13" fill="#aaa" text-anchor="middle">IT WAS AWFUL.</text>
+  </svg>`,
+
+  trollface: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#0d0d0d"/>
+    <!-- troll face sketch style -->
+    <ellipse cx="200" cy="155" rx="90" ry="95" fill="none" stroke="white" stroke-width="3"/>
+    <!-- squinty eyes -->
+    <path d="M155 130 Q172 118 190 130" stroke="white" stroke-width="4" fill="none"/>
+    <path d="M210 130 Q227 118 245 130" stroke="white" stroke-width="4" fill="none"/>
+    <ellipse cx="172" cy="135" rx="12" ry="10" fill="#111" stroke="white" stroke-width="2"/>
+    <ellipse cx="228" cy="135" rx="12" ry="10" fill="#111" stroke="white" stroke-width="2"/>
+    <!-- brow angled inward troll style -->
+    <path d="M148 118 Q172 108 190 122" stroke="white" stroke-width="5" fill="none"/>
+    <path d="M210 122 Q228 108 252 118" stroke="white" stroke-width="5" fill="none"/>
+    <!-- big troll grin -->
+    <path d="M130 180 Q165 230 200 235 Q235 230 270 180" stroke="white" stroke-width="4" fill="none"/>
+    <!-- teeth -->
+    <path d="M150 195 Q155 218 160 220 Q165 218 165 195" fill="white"/>
+    <path d="M170 205 Q175 228 180 230 Q185 228 185 205" fill="white"/>
+    <path d="M190 210 Q195 232 200 234 Q205 232 205 210" fill="white"/>
+    <path d="M210 205 Q215 228 220 230 Q225 228 225 205" fill="white"/>
+    <path d="M230 195 Q235 218 240 220 Q245 218 245 195" fill="white"/>
+    <!-- nose (round ball) -->
+    <circle cx="200" cy="165" r="14" fill="none" stroke="white" stroke-width="3"/>
+    <!-- ears -->
+    <ellipse cx="110" cy="155" rx="18" ry="25" fill="none" stroke="white" stroke-width="3"/>
+    <ellipse cx="290" cy="155" rx="18" ry="25" fill="none" stroke="white" stroke-width="3"/>
+    <!-- hair (tufts) -->
+    <path d="M155 60 Q165 40 175 60" stroke="white" stroke-width="3" fill="none"/>
+    <path d="M190 55 Q200 32 210 55" stroke="white" stroke-width="3" fill="none"/>
+    <path d="M225 60 Q235 40 245 60" stroke="white" stroke-width="3" fill="none"/>
+    <text x="200" y="270" font-family="Impact,Arial Black,sans-serif" font-size="26" font-weight="bold" fill="white" text-anchor="middle">U MAD BRO?</text>
+    <text x="200" y="290" font-family="Impact,sans-serif" font-size="14" fill="#888" text-anchor="middle">PROBLEM?</text>
+  </svg>`,
+
+  rickroll: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="stage" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a0a2e"/>
+        <stop offset="100%" stop-color="#0a0a1a"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#stage)"/>
+    <!-- spotlight beams -->
+    <polygon points="200,0 80,300 120,300" fill="#ffffff08"/>
+    <polygon points="200,0 280,300 320,300" fill="#ffffff08"/>
+    <polygon points="200,0 150,300 250,300" fill="#ffffff12"/>
+    <!-- Rick Astley figure -->
+    <!-- legs -->
+    <rect x="178" y="225" width="18" height="55" fill="#1a1a8a" rx="4"/>
+    <rect x="202" y="225" width="18" height="55" fill="#1a1a8a" rx="4"/>
+    <!-- shoes -->
+    <ellipse cx="187" cy="278" rx="18" ry="8" fill="#111"/>
+    <ellipse cx="211" cy="278" rx="18" ry="8" fill="#111"/>
+    <!-- body (suit) -->
+    <rect x="168" y="155" width="64" height="75" fill="#1a1a8a" rx="8"/>
+    <!-- shirt/tie -->
+    <rect x="190" y="158" width="20" height="50" fill="white" rx="2"/>
+    <polygon points="200,162 196,185 200,188 204,185" fill="#cc0000"/>
+    <!-- arms - one pointing out -->
+    <rect x="138" y="158" width="34" height="16" fill="#1a1a8a" rx="8"/>
+    <rect x="226" y="158" width="34" height="16" fill="#1a1a8a" rx="8"/>
+    <circle cx="136" cy="166" r="12" fill="#ffcc99"/>
+    <circle cx="262" cy="166" r="12" fill="#ffcc99"/>
+    <!-- neck & head -->
+    <rect x="192" y="140" width="16" height="20" fill="#ffcc99"/>
+    <circle cx="200" cy="125" r="30" fill="#ffcc99"/>
+    <!-- hair (80s tall hair) -->
+    <ellipse cx="200" cy="98" rx="28" ry="20" fill="#8B4513"/>
+    <path d="M174 110 Q180 80 200 75 Q220 80 226 110" fill="#8B4513"/>
+    <!-- face -->
+    <ellipse cx="192" cy="126" rx="5" ry="6" fill="#3a2a1a"/>
+    <ellipse cx="208" cy="126" rx="5" ry="6" fill="#3a2a1a"/>
+    <path d="M190 138 Q200 145 210 138" stroke="#c87a5a" stroke-width="2" fill="none"/>
+    <!-- microphone -->
+    <rect x="225" y="140" width="6" height="25" fill="#888" rx="3"/>
+    <circle cx="228" cy="138" r="8" fill="#666"/>
+    <!-- caption -->
+    <rect x="60" y="28" width="280" height="60" fill="black" opacity="0.6" rx="6"/>
+    <text x="200" y="55" font-family="Impact,Arial Black,sans-serif" font-size="22" font-weight="bold" fill="white" text-anchor="middle">NEVER GONNA</text>
+    <text x="200" y="80" font-family="Impact,Arial Black,sans-serif" font-size="22" font-weight="bold" fill="#e8c547" text-anchor="middle">GIVE YOU UP</text>
+  </svg>`,
+
+  harambe: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="gbg" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#2d5a27"/>
+        <stop offset="100%" stop-color="#1a3a15"/>
+      </radialGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#gbg)"/>
+    <!-- gorilla silhouette -->
+    <ellipse cx="200" cy="200" rx="90" ry="80" fill="#1a1a1a"/>
+    <!-- head -->
+    <circle cx="200" cy="130" r="65" fill="#1a1a1a"/>
+    <!-- sagittal crest (top ridge) -->
+    <ellipse cx="200" cy="80" rx="35" ry="25" fill="#2a2a2a"/>
+    <path d="M165 95 Q200 60 235 95" fill="#222"/>
+    <!-- face area (lighter) -->
+    <ellipse cx="200" cy="140" rx="45" ry="40" fill="#3a3a3a"/>
+    <!-- brow ridge -->
+    <path d="M155 118 Q200 105 245 118" stroke="#111" stroke-width="8" fill="none"/>
+    <!-- eyes deep-set -->
+    <ellipse cx="182" cy="128" rx="14" ry="12" fill="#111"/>
+    <ellipse cx="218" cy="128" rx="14" ry="12" fill="#111"/>
+    <circle cx="184" cy="128" r="5" fill="#3a5a3a"/>
+    <circle cx="220" cy="128" r="5" fill="#3a5a3a"/>
+    <circle cx="185" cy="126" r="2" fill="white" opacity="0.6"/>
+    <circle cx="221" cy="126" r="2" fill="white" opacity="0.6"/>
+    <!-- nostrils -->
+    <ellipse cx="193" cy="148" rx="8" ry="5" fill="#111"/>
+    <ellipse cx="207" cy="148" rx="8" ry="5" fill="#111"/>
+    <!-- mouth (slightly open, serene) -->
+    <path d="M178 162 Q200 170 222 162" stroke="#555" stroke-width="3" fill="none"/>
+    <!-- ears -->
+    <ellipse cx="135" cy="130" rx="22" ry="28" fill="#1a1a1a"/>
+    <ellipse cx="265" cy="130" rx="22" ry="28" fill="#1a1a1a"/>
+    <!-- arms out wide -->
+    <path d="M110 185 Q70 200 50 220" stroke="#1a1a1a" stroke-width="30" stroke-linecap="round" fill="none"/>
+    <path d="M290 185 Q330 200 350 220" stroke="#1a1a1a" stroke-width="30" stroke-linecap="round" fill="none"/>
+    <!-- halo glow suggestion -->
+    <circle cx="200" cy="90" r="70" fill="none" stroke="#e8c547" stroke-width="2" opacity="0.4"/>
+    <!-- text -->
+    <text x="200" y="268" font-family="Impact,Arial Black,sans-serif" font-size="24" font-weight="bold" fill="#e8c547" text-anchor="middle" stroke="#000" stroke-width="3" paint-order="stroke">RIP HARAMBE</text>
+    <text x="200" y="288" font-family="Impact,sans-serif" font-size="14" fill="#aaa" text-anchor="middle">2014 – 2016</text>
+  </svg>`,
+
+  pigeon: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#87ceeb"/>
+    <!-- clouds -->
+    <ellipse cx="80" cy="60" rx="50" ry="30" fill="white"/>
+    <ellipse cx="60" cy="60" rx="35" ry="25" fill="white"/>
+    <ellipse cx="105" cy="55" rx="40" ry="28" fill="white"/>
+    <ellipse cx="320" cy="80" rx="45" ry="28" fill="white"/>
+    <ellipse cx="300" cy="80" rx="32" ry="22" fill="white"/>
+    <!-- anime character (young man in uniform) -->
+    <!-- body -->
+    <rect x="170" y="165" width="60" height="70" fill="#2a4a8a" rx="5"/>
+    <!-- white shirt collar -->
+    <polygon points="200,168 188,178 200,172 212,178" fill="white"/>
+    <!-- head -->
+    <circle cx="200" cy="148" r="32" fill="#ffcc99"/>
+    <!-- hair -->
+    <ellipse cx="200" cy="125" rx="34" ry="22" fill="#1a0a00"/>
+    <rect x="168" y="125" width="12" height="18" fill="#1a0a00" rx="3"/>
+    <rect x="220" y="125" width="12" height="18" fill="#1a0a00" rx="3"/>
+    <!-- eyes (big anime eyes) -->
+    <ellipse cx="188" cy="150" rx="10" ry="12" fill="white"/>
+    <ellipse cx="212" cy="150" rx="10" ry="12" fill="white"/>
+    <ellipse cx="188" cy="152" rx="7" ry="9" fill="#3a6aaa"/>
+    <ellipse cx="212" cy="152" rx="7" ry="9" fill="#3a6aaa"/>
+    <circle cx="188" cy="152" r="4" fill="#111"/>
+    <circle cx="212" cy="152" r="4" fill="#111"/>
+    <circle cx="190" cy="149" r="2" fill="white"/>
+    <circle cx="214" cy="149" r="2" fill="white"/>
+    <!-- sweat drop (confused) -->
+    <ellipse cx="232" cy="138" rx="5" ry="8" fill="#88ccff" opacity="0.8"/>
+    <!-- pointing arm up at butterfly -->
+    <path d="M228 185 Q270 160 290 130" stroke="#ffcc99" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <circle cx="292" cy="128" r="10" fill="#ffcc99"/>
+    <!-- butterfly -->
+    <ellipse cx="330" cy="90" rx="22" ry="14" fill="#ff69b4" transform="rotate(-30 330 90)"/>
+    <ellipse cx="348" cy="82" rx="16" ry="10" fill="#ff1493" transform="rotate(-30 348 82)"/>
+    <ellipse cx="312" cy="98" rx="16" ry="10" fill="#ff69b4" transform="rotate(-30 312 98)"/>
+    <line x1="330" y1="80" x2="330" y2="105" stroke="#333" stroke-width="2"/>
+    <!-- speech bubble -->
+    <rect x="50" y="100" width="190" height="55" fill="white" rx="8"/>
+    <polygon points="90,155 105,155 97,170" fill="white"/>
+    <text x="145" y="126" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">Is this a</text>
+    <text x="145" y="146" font-family="Arial,sans-serif" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">pigeon?</text>
+  </svg>`,
+
+  icebucket: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="ibkg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8f4f8"/>
+        <stop offset="100%" stop-color="#c8dce8"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#ibkg)"/>
+    <!-- backdrop / building -->
+    <rect x="0" y="180" width="400" height="120" fill="#d4c8a8"/>
+    <rect x="60" y="100" width="100" height="200" fill="#c8b890"/>
+    <rect x="240" y="120" width="100" height="180" fill="#c8b890"/>
+    <!-- person silhouette -->
+    <circle cx="200" cy="145" r="30" fill="#4a3a2a"/>
+    <rect x="175" y="172" width="50" height="65" fill="#4a3a2a" rx="6"/>
+    <rect x="155" y="178" width="22" height="50" fill="#4a3a2a" rx="8"/>
+    <rect x="223" y="178" width="22" height="50" fill="#4a3a2a" rx="8"/>
+    <rect x="178" y="235" width="20" height="45" fill="#3a2a1a" rx="5"/>
+    <rect x="202" y="235" width="20" height="45" fill="#3a2a1a" rx="5"/>
+    <!-- bucket overhead -->
+    <rect x="172" y="68" width="56" height="45" fill="#c0c0c0" rx="4"/>
+    <rect x="168" y="65" width="64" height="10" fill="#aaa" rx="3"/>
+    <rect x="185" y="55" width="30" height="15" fill="#aaa" rx="3"/>
+    <!-- water/ice cascade -->
+    <rect x="178" y="108" width="44" height="50" fill="#88ccff" opacity="0.7" rx="3"/>
+    <!-- ice cubes falling -->
+    <rect x="182" y="115" width="14" height="14" fill="#ccedff" rx="2" transform="rotate(15 189 122)"/>
+    <rect x="200" y="122" width="12" height="12" fill="#ccedff" rx="2" transform="rotate(-10 206 128)"/>
+    <rect x="188" y="135" width="10" height="10" fill="#ccedff" rx="2" transform="rotate(5 193 140)"/>
+    <!-- splash at shoulder level -->
+    <ellipse cx="200" cy="168" rx="45" ry="12" fill="#88ccff" opacity="0.6"/>
+    <path d="M160 165 Q180 148 200 168 Q220 148 240 165" fill="#aaddff" opacity="0.5"/>
+    <!-- ALS ribbon / text overlay -->
+    <rect x="60" y="22" width="280" height="38" fill="#0050a0" rx="8"/>
+    <text x="200" y="38" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="white" text-anchor="middle">ICE BUCKET CHALLENGE</text>
+    <text x="200" y="54" font-family="Impact,Arial,sans-serif" font-size="13" fill="#88ccff" text-anchor="middle">$220M raised for ALS research</text>
+  </svg>`,
+
+  selfish_gene: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bookbg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#0a0a2e"/>
+        <stop offset="100%" stop-color="#1a1a4e"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#bookbg)"/>
+    <!-- DNA double helix illustration -->
+    <!-- strand 1 -->
+    <path d="M60 30 C100 60 140 90 100 120 C60 150 100 180 140 210 C180 240 140 270 100 295" stroke="#e8c547" stroke-width="3" fill="none"/>
+    <!-- strand 2 -->
+    <path d="M160 30 C120 60 80 90 120 120 C160 150 120 180 80 210 C40 240 80 270 120 295" stroke="#ff4d4d" stroke-width="3" fill="none"/>
+    <!-- rungs -->
+    <line x1="88" y1="50" x2="133" y2="50" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="70" y1="80" x2="150" y2="80" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="78" y1="110" x2="142" y2="110" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="96" y1="140" x2="124" y2="140" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="116" y1="170" x2="104" y2="170" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="130" y1="200" x2="90" y2="200" stroke="#ffffff55" stroke-width="2"/>
+    <line x1="110" y1="230" x2="110" y2="230" stroke="#ffffff55" stroke-width="2"/>
+    <!-- Book cover representation -->
+    <rect x="200" y="40" width="160" height="220" fill="#c8501a" rx="4"/>
+    <rect x="205" y="45" width="150" height="210" fill="#d4601a" rx="3"/>
+    <!-- Book spine line -->
+    <rect x="200" y="40" width="8" height="220" fill="#a03a10" rx="2"/>
+    <!-- Title text on book -->
+    <text x="280" y="90" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">THE</text>
+    <text x="280" y="115" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#e8c547" text-anchor="middle">SELFISH</text>
+    <text x="280" y="140" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#e8c547" text-anchor="middle">GENE</text>
+    <!-- little human figures on book cover -->
+    <circle cx="255" cy="180" r="10" fill="#ffcc99"/>
+    <line x1="255" y1="190" x2="255" y2="215" stroke="#ffcc99" stroke-width="4"/>
+    <line x1="245" y1="200" x2="265" y2="200" stroke="#ffcc99" stroke-width="3"/>
+    <circle cx="305" cy="180" r="10" fill="#ffcc99"/>
+    <line x1="305" y1="190" x2="305" y2="215" stroke="#ffcc99" stroke-width="4"/>
+    <line x1="295" y1="200" x2="315" y2="200" stroke="#ffcc99" stroke-width="3"/>
+    <!-- gene arrows between them -->
+    <path d="M265 197 Q280 188 295 197" stroke="#e8c547" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+    <text x="280" y="175" font-family="Arial,sans-serif" font-size="9" fill="#e8c547" text-anchor="middle">MEME</text>
+    <text x="280" y="248" font-family="Georgia,serif" font-size="11" fill="#ddd" text-anchor="middle">Richard Dawkins</text>
+    <text x="280" y="263" font-family="Georgia,serif" font-size="10" fill="#aaa" text-anchor="middle">1976</text>
+    <!-- quote at bottom -->
+    <rect x="0" y="255" width="196" height="45" fill="rgba(0,0,0,0.5)" rx="0"/>
+    <text x="98" y="272" font-family="Georgia,serif" font-size="11" font-style="italic" fill="#e8c547" text-anchor="middle">"Meme: a unit of</text>
+    <text x="98" y="288" font-family="Georgia,serif" font-size="11" font-style="italic" fill="#e8c547" text-anchor="middle">cultural transmission"</text>
+  </svg>`,
+
+  dancing_baby: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="dbkg" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#2a2a4a"/>
+        <stop offset="100%" stop-color="#0a0a1a"/>
+      </radialGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#dbkg)"/>
+    <!-- retro computer screen frame -->
+    <rect x="40" y="20" width="320" height="240" fill="#5a5a5a" rx="20"/>
+    <rect x="55" y="35" width="290" height="210" fill="#1a8a2a" rx="8"/>
+    <!-- scanlines effect -->
+    <rect x="55" y="35" width="290" height="210" fill="url(#scan)" rx="8" opacity="0.3"/>
+    <!-- 3D baby figure (cha-cha style) -->
+    <!-- body (rotated/dancing) -->
+    <ellipse cx="200" cy="185" rx="30" ry="38" fill="#c8b060" transform="rotate(10 200 185)"/>
+    <!-- head -->
+    <circle cx="208" cy="145" r="32" fill="#d4bc70"/>
+    <!-- baby face -->
+    <circle cx="200" cy="143" r="7" fill="#b89050"/><!-- forehead highlight -->
+    <circle cx="197" cy="147" r="4" fill="#3a2a1a"/>
+    <circle cx="213" cy="145" r="4" fill="#3a2a1a"/>
+    <path d="M200 158 Q207 164 214 158" stroke="#a07050" stroke-width="2" fill="none"/>
+    <!-- diaper -->
+    <ellipse cx="200" cy="214" rx="28" ry="18" fill="white"/>
+    <!-- chubby arms up in dance -->
+    <path d="M172 175 Q145 155 135 130" stroke="#c8b060" stroke-width="16" stroke-linecap="round" fill="none"/>
+    <circle cx="132" cy="127" r="12" fill="#c8b060"/>
+    <path d="M228 172 Q255 145 270 118" stroke="#c8b060" stroke-width="16" stroke-linecap="round" fill="none"/>
+    <circle cx="272" cy="115" r="12" fill="#c8b060"/>
+    <!-- legs kicking -->
+    <path d="M183 225 Q162 245 150 265" stroke="#c8b060" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <circle cx="148" cy="267" r="10" fill="#c8b060"/>
+    <path d="M217 225 Q238 248 252 268" stroke="#c8b060" stroke-width="14" stroke-linecap="round" fill="none"/>
+    <circle cx="254" cy="270" r="10" fill="#c8b060"/>
+    <!-- motion lines -->
+    <path d="M120 140 L108 138 L115 143" stroke="#00ff00" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <path d="M280 110 L292 108 L285 114" stroke="#00ff00" stroke-width="1.5" fill="none" opacity="0.6"/>
+    <!-- CRT glow overlay -->
+    <rect x="55" y="35" width="290" height="210" fill="rgba(0,255,0,0.04)" rx="8"/>
+    <!-- screen bottom label -->
+    <rect x="40" y="245" width="320" height="15" fill="#444"/>
+    <text x="200" y="255" font-family="'Courier New',monospace" font-size="9" fill="#0a0" text-anchor="middle">DANCING BABY v1.0 · 1996 · THE FIRST VIRAL MEME</text>
+  </svg>`,
+
+  lolcat: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#4a6a4a"/>
+    <!-- wooden table/floor -->
+    <rect x="0" y="200" width="400" height="100" fill="#8B6914"/>
+    <line x1="0" y1="220" x2="400" y2="220" stroke="#7a5a10" stroke-width="2"/>
+    <line x1="0" y1="245" x2="400" y2="245" stroke="#7a5a10" stroke-width="2"/>
+    <line x1="0" y1="270" x2="400" y2="270" stroke="#7a5a10" stroke-width="2"/>
+    <!-- big orange tabby cat -->
+    <ellipse cx="200" cy="195" rx="100" ry="75" fill="#e07030"/>
+    <!-- striped markings -->
+    <path d="M130 170 Q160 155 190 170" stroke="#c05018" stroke-width="4" fill="none"/>
+    <path d="M210 168 Q240 153 270 168" stroke="#c05018" stroke-width="4" fill="none"/>
+    <path d="M140 190 Q165 182 190 190" stroke="#c05018" stroke-width="3" fill="none"/>
+    <path d="M210 188 Q235 180 260 188" stroke="#c05018" stroke-width="3" fill="none"/>
+    <!-- tail curled -->
+    <path d="M295 215 Q340 190 330 160 Q320 140 305 155" stroke="#e07030" stroke-width="16" fill="none" stroke-linecap="round"/>
+    <!-- head (big, facing forward slightly tilted) -->
+    <circle cx="200" cy="145" r="62" fill="#e07030"/>
+    <!-- ear -->
+    <polygon points="148,100 135,68 170,98" fill="#e07030"/>
+    <polygon points="153,98 143,76 166,97" fill="#e8a0a0"/>
+    <polygon points="252,100 265,68 230,98" fill="#e07030"/>
+    <polygon points="247,98 257,76 234,97" fill="#e8a0a0"/>
+    <!-- face markings -->
+    <path d="M165 135 Q180 128 193 138" stroke="#c05018" stroke-width="3" fill="none"/>
+    <path d="M207 138 Q220 128 235 135" stroke="#c05018" stroke-width="3" fill="none"/>
+    <!-- big round eyes (pleading) -->
+    <circle cx="183" cy="148" r="20" fill="#fffde0"/>
+    <circle cx="217" cy="148" r="20" fill="#fffde0"/>
+    <circle cx="183" cy="150" r="14" fill="#3a8a1a"/>
+    <circle cx="217" cy="150" r="14" fill="#3a8a1a"/>
+    <circle cx="183" cy="150" r="9" fill="#111"/>
+    <circle cx="217" cy="150" r="9" fill="#111"/>
+    <circle cx="186" cy="147" r="4" fill="white"/>
+    <circle cx="220" cy="147" r="4" fill="white"/>
+    <!-- nose pink triangle -->
+    <polygon points="197,162 200,167 203,162" fill="#e88090"/>
+    <!-- mouth curved down then up (I CAN HAS) -->
+    <path d="M188 172 Q200 182 212 172" stroke="#c05018" stroke-width="2" fill="none"/>
+    <!-- whiskers -->
+    <line x1="95" y1="160" x2="165" y2="163" stroke="#f0e0c0" stroke-width="1.5"/>
+    <line x1="95" y1="170" x2="165" y2="170" stroke="#f0e0c0" stroke-width="1.5"/>
+    <line x1="235" y1="163" x2="305" y2="160" stroke="#f0e0c0" stroke-width="1.5"/>
+    <line x1="235" y1="170" x2="305" y2="170" stroke="#f0e0c0" stroke-width="1.5"/>
+    <!-- cheeseburger in front -->
+    <ellipse cx="200" cy="225" rx="38" ry="12" fill="#c8a040"/>
+    <ellipse cx="200" cy="218" rx="35" ry="10" fill="#a06030"/>
+    <ellipse cx="200" cy="213" rx="32" ry="8" fill="#4a8a1a"/>
+    <ellipse cx="200" cy="208" rx="34" ry="9" fill="#c84020"/>
+    <ellipse cx="200" cy="202" rx="35" ry="9" fill="#c8a040"/>
+    <!-- Impact text -->
+    <text x="200" y="28" font-family="Impact,Arial Black,sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" stroke="#000" stroke-width="4" paint-order="stroke">I CAN HAS</text>
+    <text x="200" y="295" font-family="Impact,Arial Black,sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" stroke="#000" stroke-width="4" paint-order="stroke">CHEEZBURGER?</text>
+  </svg>`,
+
+  rage_comics: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#f5f5e8"/>
+    <!-- comic panels grid -->
+    <rect x="5" y="5" width="185" height="135" fill="white" stroke="#333" stroke-width="3"/>
+    <rect x="210" y="5" width="185" height="135" fill="white" stroke="#333" stroke-width="3"/>
+    <rect x="5" y="155" width="185" height="140" fill="white" stroke="#333" stroke-width="3"/>
+    <rect x="210" y="155" width="185" height="140" fill="white" stroke="#333" stroke-width="3"/>
+    <!-- Panel 1: stick figure at computer -->
+    <circle cx="70" cy="50" r="20" fill="none" stroke="#333" stroke-width="3"/>
+    <line x1="70" y1="70" x2="70" y2="110" stroke="#333" stroke-width="3"/>
+    <line x1="45" y1="85" x2="95" y2="85" stroke="#333" stroke-width="3"/>
+    <line x1="70" y1="110" x2="50" y2="133" stroke="#333" stroke-width="3"/>
+    <line x1="70" y1="110" x2="90" y2="133" stroke="#333" stroke-width="3"/>
+    <!-- monitor -->
+    <rect x="130" y="55" width="50" height="40" fill="#ddd" stroke="#333" stroke-width="2"/>
+    <rect x="148" y="95" width="14" height="12" fill="#aaa"/>
+    <!-- speech bubble panel 1 -->
+    <rect x="30" y="30" width="80" height="22" fill="#fffde0" stroke="#333" stroke-width="1.5" rx="4"/>
+    <text x="70" y="45" font-family="Arial,sans-serif" font-size="8" fill="#333" text-anchor="middle">Problem?</text>
+    <!-- Panel 2: FOREVER ALONE face -->
+    <circle cx="302" cy="55" r="35" fill="#f5c060"/>
+    <circle cx="290" cy="48" r="8" fill="#333"/>
+    <circle cx="314" cy="48" r="8" fill="#333"/>
+    <circle cx="292" cy="46" r="3" fill="white"/>
+    <circle cx="316" cy="46" r="3" fill="white"/>
+    <!-- sad mouth -->
+    <path d="M285 72 Q302 65 319 72" stroke="#8a5a3a" stroke-width="3" fill="none"/>
+    <!-- tear drops -->
+    <ellipse cx="288" cy="66" rx="4" ry="7" fill="#88aaff"/>
+    <ellipse cx="316" cy="66" rx="4" ry="7" fill="#88aaff"/>
+    <text x="302" y="107" font-family="Impact,Arial Black,sans-serif" font-size="14" font-weight="bold" fill="#333" text-anchor="middle">FOREVER</text>
+    <text x="302" y="122" font-family="Impact,Arial Black,sans-serif" font-size="14" font-weight="bold" fill="#333" text-anchor="middle">ALONE</text>
+    <!-- Panel 3: ME GUSTA face -->
+    <circle cx="97" cy="222" r="42" fill="#e05030"/>
+    <!-- creepy eyes -->
+    <ellipse cx="83" cy="212" rx="12" ry="10" fill="white"/>
+    <ellipse cx="111" cy="212" rx="12" ry="10" fill="white"/>
+    <circle cx="83" cy="212" r="7" fill="#111"/>
+    <circle cx="111" cy="212" r="7" fill="#111"/>
+    <!-- huge grin -->
+    <path d="M70 232 Q97 258 124 232" fill="#333"/>
+    <!-- teeth -->
+    <rect x="76" y="233" width="12" height="15" fill="white"/>
+    <rect x="90" y="235" width="14" height="17" fill="white"/>
+    <rect x="106" y="233" width="12" height="15" fill="white"/>
+    <text x="97" y="280" font-family="Impact,Arial Black,sans-serif" font-size="16" font-weight="bold" fill="#e05030" text-anchor="middle">ME GUSTA</text>
+    <!-- Panel 4: Y U NO guy -->
+    <circle cx="302" cy="215" r="38" fill="#f0e060"/>
+    <!-- angry scrunched face -->
+    <path d="M272 200 Q285 188 302 200 Q319 188 332 200" stroke="#333" stroke-width="4" fill="none"/>
+    <circle cx="288" cy="210" r="9" fill="#333"/>
+    <circle cx="316" cy="210" r="9" fill="#333"/>
+    <circle cx="290" cy="208" r="3" fill="#ff0000"/>
+    <circle cx="318" cy="208" r="3" fill="#ff0000"/>
+    <!-- open screaming mouth -->
+    <ellipse cx="302" cy="230" rx="20" ry="14" fill="#333"/>
+    <ellipse cx="302" cy="228" rx="16" ry="8" fill="#cc2020"/>
+    <!-- text -->
+    <text x="302" y="268" font-family="Impact,Arial Black,sans-serif" font-size="13" font-weight="bold" fill="#333" text-anchor="middle">Y U NO</text>
+    <text x="302" y="284" font-family="Impact,Arial Black,sans-serif" font-size="11" font-weight="bold" fill="#666" text-anchor="middle">JUST DO IT?</text>
+  </svg>`,
+
+  ai_age: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="aikg" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#0a1a3a"/>
+        <stop offset="100%" stop-color="#050810"/>
+      </radialGradient>
+      <filter id="glow">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="400" height="300" fill="url(#aikg)"/>
+    <!-- circuit board lines -->
+    <line x1="0" y1="50" x2="400" y2="50" stroke="#00d4ff11" stroke-width="1"/>
+    <line x1="0" y1="150" x2="400" y2="150" stroke="#00d4ff11" stroke-width="1"/>
+    <line x1="0" y1="250" x2="400" y2="250" stroke="#00d4ff11" stroke-width="1"/>
+    <line x1="80" y1="0" x2="80" y2="300" stroke="#00d4ff11" stroke-width="1"/>
+    <line x1="200" y1="0" x2="200" y2="300" stroke="#00d4ff11" stroke-width="1"/>
+    <line x1="320" y1="0" x2="320" y2="300" stroke="#00d4ff11" stroke-width="1"/>
+    <!-- AI brain / neural network center -->
+    <circle cx="200" cy="150" r="55" fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.4" filter="url(#glow)"/>
+    <circle cx="200" cy="150" r="38" fill="none" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="200" cy="150" r="20" fill="#0a1a3a" stroke="#00d4ff" stroke-width="2"/>
+    <!-- AI symbol inside -->
+    <text x="200" y="157" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#00d4ff" text-anchor="middle" filter="url(#glow)">AI</text>
+    <!-- neural network nodes -->
+    <circle cx="200" cy="75" r="10" fill="#7c3aed" opacity="0.8"/>
+    <circle cx="265" cy="112" r="10" fill="#7c3aed" opacity="0.8"/>
+    <circle cx="265" cy="188" r="10" fill="#00d4ff" opacity="0.8"/>
+    <circle cx="200" cy="225" r="10" fill="#00d4ff" opacity="0.8"/>
+    <circle cx="135" cy="188" r="10" fill="#ff4d4d" opacity="0.8"/>
+    <circle cx="135" cy="112" r="10" fill="#ff4d4d" opacity="0.8"/>
+    <!-- connections -->
+    <line x1="200" y1="85" x2="200" y2="112" stroke="#7c3aed" stroke-width="1.5" opacity="0.5"/>
+    <line x1="200" y1="188" x2="200" y2="215" stroke="#00d4ff" stroke-width="1.5" opacity="0.5"/>
+    <line x1="200" y1="85" x2="257" y2="118" stroke="#7c3aed" stroke-width="1" opacity="0.4"/>
+    <line x1="200" y1="85" x2="143" y2="118" stroke="#ff4d4d" stroke-width="1" opacity="0.4"/>
+    <line x1="200" y1="215" x2="257" y2="182" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+    <line x1="200" y1="215" x2="143" y2="182" stroke="#ff4d4d" stroke-width="1" opacity="0.4"/>
+    <line x1="257" y1="118" x2="257" y2="182" stroke="#7c3aed" stroke-width="1" opacity="0.3"/>
+    <line x1="143" y1="118" x2="143" y2="182" stroke="#ff4d4d" stroke-width="1" opacity="0.3"/>
+    <!-- meme icons orbiting -->
+    <text x="200" y="68" font-size="16" text-anchor="middle">🐸</text>
+    <text x="271" y="116" font-size="14" text-anchor="middle">💀</text>
+    <text x="271" y="195" font-size="14" text-anchor="middle">😂</text>
+    <text x="200" y="244" font-size="16" text-anchor="middle">🔥</text>
+    <text x="128" y="195" font-size="14" text-anchor="middle">🤖</text>
+    <text x="128" y="116" font-size="14" text-anchor="middle">✨</text>
+    <!-- glitch text -->
+    <text x="200" y="30" font-family="'Courier New',monospace" font-size="13" fill="#00d4ff" text-anchor="middle" opacity="0.7">AI GENERATED MEME ERA</text>
+    <text x="200" y="30" font-family="'Courier New',monospace" font-size="13" fill="#ff4d4d" text-anchor="middle" opacity="0.3" dx="2">AI GENERATED MEME ERA</text>
+    <text x="200" y="280" font-family="'Courier New',monospace" font-size="11" fill="#7c3aed" text-anchor="middle" opacity="0.8">2023 – present · WHAT IS REAL?</text>
+  </svg>`,
+
+  tiktok: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#0a0a0a"/>
+    <!-- phone frame -->
+    <rect x="130" y="20" width="140" height="260" fill="#1a1a1a" rx="20"/>
+    <rect x="137" y="30" width="126" height="240" fill="#000" rx="15"/>
+    <!-- screen content: TikTok-style -->
+    <rect x="137" y="30" width="126" height="240" fill="#111" rx="15"/>
+    <!-- background video simulation -->
+    <rect x="137" y="30" width="126" height="240" fill="url(#tikbg)" rx="15"/>
+    <defs>
+      <linearGradient id="tikbg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0d2137"/>
+        <stop offset="100%" stop-color="#1a0a2e"/>
+      </linearGradient>
+    </defs>
+    <!-- person on screen -->
+    <circle cx="200" cy="115" r="22" fill="#ffcc99"/>
+    <rect x="185" y="135" width="30" height="45" fill="#e84393" rx="4"/>
+    <ellipse cx="196" cy="110" rx="25" ry="15" fill="#1a1a1a"/>
+    <!-- musical note icons -->
+    <text x="220" y="175" font-size="14">🎵</text>
+    <text x="222" y="195" font-size="12">🎶</text>
+    <!-- like/comment/share icons on right -->
+    <circle cx="248" cy="165" r="10" fill="#ff2d55"/>
+    <text x="248" y="169" font-size="10" text-anchor="middle" fill="white">♥</text>
+    <circle cx="248" cy="188" r="10" fill="#444"/>
+    <text x="248" y="193" font-size="9" text-anchor="middle" fill="white">💬</text>
+    <!-- hashtag overlay -->
+    <text x="147" y="225" font-family="Arial,sans-serif" font-size="9" fill="white" opacity="0.8">#viral #meme</text>
+    <text x="147" y="240" font-family="Arial,sans-serif" font-size="9" fill="white" opacity="0.6">#fyp #trend</text>
+    <!-- TikTok logo color accent -->
+    <text x="155" y="255" font-family="Arial Black,sans-serif" font-size="14" font-weight="bold" fill="#ff2d55">Tik</text>
+    <text x="172" y="255" font-family="Arial Black,sans-serif" font-size="14" font-weight="bold" fill="white">Tok</text>
+    <!-- floating emoji outside phone -->
+    <text x="50" y="80" font-size="28" opacity="0.7">🌽</text>
+    <text x="325" y="120" font-size="24" opacity="0.6">😭</text>
+    <text x="45" y="180" font-size="22" opacity="0.5">💀</text>
+    <text x="330" y="200" font-size="26" opacity="0.7">🔥</text>
+    <text x="70" y="240" font-size="20" opacity="0.5">👁️</text>
+    <!-- caption -->
+    <text x="200" y="298" font-family="Impact,Arial Black,sans-serif" font-size="13" fill="#ff2d55" text-anchor="middle">VIDEO MEMES TAKE OVER · 2019</text>
+  </svg>`,
+
+  surreal: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#ff6b6b"/>
+    <!-- deep fried aesthetic -->
+    <rect width="400" height="300" fill="#ff9900" opacity="0.3"/>
+    <!-- compression artifacts -->
+    <rect x="0" y="0" width="400" height="300" fill="url(#jpeg)"/>
+    <defs>
+      <pattern id="jpeg" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+        <rect width="4" height="4" fill="#ff000008"/>
+        <rect x="4" y="4" width="4" height="4" fill="#0000ff08"/>
+      </pattern>
+    </defs>
+    <!-- surreal elements -->
+    <!-- floating eyes -->
+    <circle cx="80" cy="80" r="25" fill="white"/>
+    <circle cx="80" cy="80" r="17" fill="#3a3aff"/>
+    <circle cx="80" cy="80" r="10" fill="#111"/>
+    <circle cx="84" cy="76" r="4" fill="white"/>
+    <!-- upside down man -->
+    <circle cx="200" cy="60" r="25" fill="#ffcc99" transform="rotate(180 200 60)"/>
+    <rect x="188" y="35" width="24" height="30" fill="#3a6ae8" transform="rotate(180 200 50)"/>
+    <!-- B I G text -->
+    <text x="200" y="145" font-family="Impact,Arial Black,sans-serif" font-size="72" font-weight="bold" fill="#ffff00" text-anchor="middle" stroke="#ff0000" stroke-width="4" paint-order="stroke" opacity="0.9">BIG</text>
+    <text x="200" y="200" font-family="Impact,Arial Black,sans-serif" font-size="48" font-weight="bold" fill="#00ffff" text-anchor="middle" stroke="#000" stroke-width="3" paint-order="stroke" opacity="0.9">CHUNGUS</text>
+    <!-- floating burger -->
+    <text x="310" y="100" font-size="40">🍔</text>
+    <!-- lens flare -->
+    <circle cx="320" cy="50" r="30" fill="#ffffff" opacity="0.15"/>
+    <circle cx="320" cy="50" r="15" fill="#ffff88" opacity="0.2"/>
+    <circle cx="320" cy="50" r="5" fill="white" opacity="0.5"/>
+    <!-- deep fried noise -->
+    <text x="30" y="260" font-family="Arial,sans-serif" font-size="10" fill="#ff00ff" opacity="0.7">❗QUALITY CONTENT❗</text>
+    <text x="220" y="280" font-family="Arial,sans-serif" font-size="10" fill="#00ff00" opacity="0.7">💯😂🔥💀😭👌</text>
+    <!-- eyes everywhere -->
+    <circle cx="340" cy="200" r="18" fill="white"/>
+    <circle cx="340" cy="200" r="12" fill="#ff4444"/>
+    <circle cx="340" cy="200" r="6" fill="#111"/>
+    <circle cx="60" cy="230" r="15" fill="white"/>
+    <circle cx="60" cy="230" r="10" fill="#44ff44"/>
+    <circle cx="60" cy="230" r="5" fill="#111"/>
+  </svg>`,
+
+  woman_cat: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#1a0a0a"/>
+    <!-- Left panel: woman yelling -->
+    <rect x="5" y="5" width="188" height="290" fill="#1a0810" stroke="#333" stroke-width="2"/>
+    <!-- woman figure -->
+    <circle cx="97" cy="100" r="38" fill="#ffcc99"/>
+    <!-- hair -->
+    <ellipse cx="97" cy="72" rx="42" ry="28" fill="#8B2020"/>
+    <path d="M60 85 Q55 120 65 140" stroke="#8B2020" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <path d="M134 85 Q139 120 129 140" stroke="#8B2020" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <!-- dress/top -->
+    <path d="M65 135 Q97 125 129 135 L138 280 L56 280 Z" fill="#cc3366"/>
+    <!-- angry face -->
+    <!-- brow furrowed -->
+    <path d="M73 90 Q88 82 103 90" stroke="#5a2a2a" stroke-width="4" fill="none"/>
+    <path d="M91 90 Q103 82 115 90" stroke="#5a2a2a" stroke-width="4" fill="none"/>
+    <!-- eyes with tears or wide open angry -->
+    <ellipse cx="83" cy="98" rx="9" ry="11" fill="white"/>
+    <ellipse cx="111" cy="98" rx="9" ry="11" fill="white"/>
+    <circle cx="83" cy="100" r="6" fill="#3a2a1a"/>
+    <circle cx="111" cy="100" r="6" fill="#3a2a1a"/>
+    <!-- open mouth yelling -->
+    <ellipse cx="97" cy="118" rx="20" ry="15" fill="#2a0808"/>
+    <ellipse cx="97" cy="116" rx="16" ry="8" fill="#cc4444"/>
+    <rect x="86" y="108" width="10" height="8" fill="white" rx="1"/>
+    <rect x="101" y="108" width="10" height="8" fill="white" rx="1"/>
+    <!-- pointing arm -->
+    <path d="M129 150 Q168 145 195 140" stroke="#ffcc99" stroke-width="12" stroke-linecap="round" fill="none"/>
+    <circle cx="196" cy="140" r="9" fill="#ffcc99"/>
+    <!-- text label -->
+    <text x="97" y="270" font-family="Impact,Arial Black,sans-serif" font-size="13" fill="white" text-anchor="middle">TAYLOR ARMSTRONG</text>
+    <text x="97" y="287" font-family="Impact,sans-serif" font-size="10" fill="#ff4444" text-anchor="middle">RHOBH · 2011</text>
+    <!-- Right panel: Smudge cat -->
+    <rect x="207" y="5" width="188" height="290" fill="#1a1a0a" stroke="#333" stroke-width="2"/>
+    <!-- dinner table -->
+    <rect x="207" y="230" width="188" height="10" fill="#8B6914"/>
+    <!-- plates/food on table -->
+    <ellipse cx="280" cy="232" rx="30" ry="8" fill="#ddd"/>
+    <ellipse cx="340" cy="232" rx="22" ry="6" fill="#ddd"/>
+    <!-- green vegetables (that smudge hates) -->
+    <ellipse cx="280" cy="228" rx="22" ry="6" fill="#4a8a1a"/>
+    <ellipse cx="340" cy="228" rx="16" ry="5" fill="#4a8a1a"/>
+    <!-- white fluffy cat body -->
+    <ellipse cx="301" cy="195" rx="65" ry="55" fill="#f5f5f5"/>
+    <!-- cat head -->
+    <circle cx="301" cy="145" r="55" fill="#f5f5f5"/>
+    <!-- ears -->
+    <polygon points="262,105 248,72 278,103" fill="#f5f5f5"/>
+    <polygon points="266,103 255,80 275,102" fill="#ffb0b0"/>
+    <polygon points="340,105 352,72 322,103" fill="#f5f5f5"/>
+    <polygon points="336,103 345,80 325,102" fill="#ffb0b0"/>
+    <!-- fur stripes subtle -->
+    <path d="M262 128 Q280 120 298 128" stroke="#e0e0e0" stroke-width="3" fill="none"/>
+    <path d="M304 128 Q322 120 340 128" stroke="#e0e0e0" stroke-width="3" fill="none"/>
+    <!-- eyes: slightly squinting, unimpressed -->
+    <ellipse cx="284" cy="145" rx="16" ry="14" fill="#f0f0f0"/>
+    <ellipse cx="318" cy="145" rx="16" ry="14" fill="#f0f0f0"/>
+    <ellipse cx="284" cy="147" rx="10" ry="12" fill="#3a8a3a"/>
+    <ellipse cx="318" cy="147" rx="10" ry="12" fill="#3a8a3a"/>
+    <circle cx="284" cy="147" r="7" fill="#111"/>
+    <circle cx="318" cy="147" r="7" fill="#111"/>
+    <circle cx="286" cy="144" r="2.5" fill="white"/>
+    <circle cx="320" cy="144" r="2.5" fill="white"/>
+    <!-- nose -->
+    <polygon points="298,160 301,165 304,160" fill="#ffaaaa"/>
+    <!-- flat unimpressed mouth -->
+    <line x1="290" y1="172" x2="312" y2="172" stroke="#aaa" stroke-width="2"/>
+    <!-- whiskers -->
+    <line x1="220" y1="162" x2="278" y2="163" stroke="#aaa" stroke-width="1.5"/>
+    <line x1="220" y1="170" x2="278" y2="170" stroke="#aaa" stroke-width="1.5"/>
+    <line x1="324" y1="163" x2="382" y2="162" stroke="#aaa" stroke-width="1.5"/>
+    <line x1="324" y1="170" x2="382" y2="170" stroke="#aaa" stroke-width="1.5"/>
+    <!-- text label -->
+    <text x="301" y="270" font-family="Impact,Arial Black,sans-serif" font-size="14" fill="white" text-anchor="middle">SMUDGE THE CAT</text>
+    <text x="301" y="287" font-family="Impact,sans-serif" font-size="10" fill="#e8c547" text-anchor="middle">NOT INTERESTED · 2019</text>
+  </svg>`,
+
+  drake: `<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="300" fill="#1a1a2e"/>
+    <!-- panel divider -->
+    <line x1="200" y1="0" x2="200" y2="300" stroke="#333" stroke-width="3"/>
+    <!-- Top panel: Drake NO face (disapproval) -->
+    <rect x="0" y="0" width="200" height="150" fill="#2a1a1a"/>
+    <!-- Drake figure top panel - turning away, hand up -->
+    <circle cx="90" cy="60" r="30" fill="#8B5a2a"/>
+    <!-- head turned 3/4 away gesture -->
+    <ellipse cx="85" cy="42" rx="32" ry="18" fill="#2a1a0a"/><!-- hair -->
+    <circle cx="80" cy="58" r="8" fill="#7a4a1a"/><!-- ear -->
+    <!-- body turned away -->
+    <rect x="68" y="88" width="44" height="50" fill="#1a3a5a" rx="5"/>
+    <!-- hand up/out gesture - dismissal -->
+    <path d="M112 100 Q140 90 155 82" stroke="#8B5a2a" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <circle cx="157" cy="81" r="9" fill="#8B5a2a"/>
+    <!-- X symbol -->
+    <line x1="155" y1="115" x2="185" y2="85" stroke="#ff4444" stroke-width="5"/>
+    <line x1="185" y1="115" x2="155" y2="85" stroke="#ff4444" stroke-width="5"/>
+    <!-- label bottom panel 1 -->
+    <rect x="0" y="120" width="200" height="30" fill="rgba(0,0,0,0.6)"/>
+    <text x="100" y="140" font-family="Impact,Arial Black,sans-serif" font-size="13" fill="#ff6666" text-anchor="middle">OLD THING ❌</text>
+
+    <!-- Bottom panel: Drake YES face (approval, pointing) -->
+    <rect x="0" y="150" width="200" height="150" fill="#1a2a1a"/>
+    <!-- Drake figure bottom panel - pointing forward, smiling -->
+    <circle cx="90" cy="205" r="30" fill="#8B5a2a"/>
+    <ellipse cx="90" cy="186" rx="32" ry="18" fill="#2a1a0a"/>
+    <!-- drake face with smile -->
+    <circle cx="80" cy="203" r="7" fill="#7a4a1a"/>
+    <path d="M78 216 Q90 226 102 216" stroke="#c87a4a" stroke-width="2" fill="none"/>
+    <!-- body pointing -->
+    <rect x="68" y="233" width="44" height="45" fill="#2a1a8a" rx="5"/>
+    <!-- big pointing arm toward right side -->
+    <path d="M112 245 Q150 235 175 225" stroke="#8B5a2a" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <circle cx="177" cy="224" r="9" fill="#8B5a2a"/>
+    <!-- pointing finger -->
+    <rect x="172" y="218" width="20" height="8" fill="#8B5a2a" rx="4"/>
+    <text x="100" y="290" font-family="Impact,Arial Black,sans-serif" font-size="13" fill="#44ff66" text-anchor="middle">NEW THING ✅</text>
+
+    <!-- Right side: the labeled things -->
+    <rect x="200" y="0" width="200" height="150" fill="#0a1a0a"/>
+    <text x="300" y="60" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#888" text-anchor="middle">DOING THE</text>
+    <text x="300" y="82" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#888" text-anchor="middle">SENSIBLE</text>
+    <text x="300" y="104" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#888" text-anchor="middle">THING</text>
+
+    <rect x="200" y="150" width="200" height="150" fill="#0a0a1a"/>
+    <text x="300" y="210" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#e8c547" text-anchor="middle">WHATEVER</text>
+    <text x="300" y="232" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#e8c547" text-anchor="middle">DRAKE IS</text>
+    <text x="300" y="254" font-family="Impact,Arial Black,sans-serif" font-size="16" fill="#e8c547" text-anchor="middle">POINTING AT</text>
+
+    <!-- divider line right side -->
+    <line x1="200" y1="150" x2="400" y2="150" stroke="#333" stroke-width="3"/>
+  </svg>`,
+
+};
+
+// ─── HERO IMAGES
+const heroRight = document.getElementById('heroRight');
+const heroImgs = [
+  { key:'doge', label:'Doge · 2013', span:2 },
+  { key:'grumpycat', label:'Grumpy Cat · 2012', span:1 },
+  { key:'distracted', label:'Distracted BF · 2017', span:1 },
+];
+heroImgs.forEach((h,i) => {
+  const card = document.createElement('div');
+  card.className = 'hero-img-card';
+  if(h.span===2) card.style.gridRow = 'span 2';
+  card.innerHTML = MEME_SVG[h.key] + `<div class="img-label">${h.label}</div>`;
+  heroRight.appendChild(card);
+});
+
+// ─── CURSOR
+const cur = document.getElementById('cur'), cur2 = document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
+(function animCur(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cur.style.left=mx+'px';cur.style.top=my+'px';cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(animCur);})();
+document.addEventListener('mousedown',()=>{cur.style.transform='translate(-50%,-50%) scale(1.6)';});
+document.addEventListener('mouseup',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';});
+
+// ─── PARTICLES
+const canvas=document.getElementById('particleCanvas'),pctx=canvas.getContext('2d');
+let W,H,parts=[];
+function resz(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resz();window.addEventListener('resize',resz);
+class P{constructor(){this.r2();}r2(){this.x=Math.random()*W;this.y=Math.random()*H;this.r=Math.random()*1.5+.3;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.a=Math.random()*.4+.1;const h=['232,197,71','255,77,77','0,212,255'];this.c=h[Math.floor(Math.random()*h.length)];}up(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.r2();}dr(){pctx.beginPath();pctx.arc(this.x,this.y,this.r,0,Math.PI*2);pctx.fillStyle=`rgba(${this.c},${this.a})`;pctx.fill();}}
+for(let i=0;i<80;i++)parts.push(new P());
+(function ap(){pctx.clearRect(0,0,W,H);parts.forEach(p=>{p.up();p.dr();});for(let i=0;i<parts.length;i++)for(let j=i+1;j<parts.length;j++){const dx=parts[i].x-parts[j].x,dy=parts[i].y-parts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<90){pctx.beginPath();pctx.moveTo(parts[i].x,parts[i].y);pctx.lineTo(parts[j].x,parts[j].y);pctx.strokeStyle=`rgba(232,197,71,${.06*(1-d/90)})`;pctx.lineWidth=.5;pctx.stroke();}}requestAnimationFrame(ap);})();
+
+// ─── MARQUEE
 const mi=document.getElementById('marqueeInner');
-[...marqueeItems,...marqueeItems].forEach(item=>{const el=document.createElement('div');el.className='marquee-item';el.innerHTML=`${item}<span class="marquee-dot"></span>`;mi.appendChild(el);});
+const mItems=['🐸 Pepe the Frog','💀 Doomscrolling','😂 Touch Grass','🔥 This Is Fine','🧀 Gouda Content','💅 No Cap Fr','🐕 Such Wow','👁️ Side-Eye Chloe','📈 Stonks','🌽 It\'s Corn','🎻 Woman Yelling at Cat','🤌 Chef\'s Kiss','🦁 RIP Harambe'];
+[...mItems,...mItems].forEach(item=>{const el=document.createElement('div');el.className='marquee-item';el.innerHTML=`${item}<span class="marquee-dot"></span>`;mi.appendChild(el);});
 
-// ── COUNTERS
-const counters=[{id:'cnt1',target:55,suffix:'M+'},{id:'cnt2',target:1976,suffix:''},{id:'cnt3',target:48,suffix:'%'},{id:'cnt4',target:7,suffix:'days'}];
-function animCount(el,start,end,suffix,dur=1600){const s=performance.now();const run=t=>{const p=Math.min((t-s)/dur,1);const ease=1-Math.pow(1-p,3);el.textContent=Math.round(start+(end-start)*ease)+suffix;if(p<1)requestAnimationFrame(run);};requestAnimationFrame(run);}
-const cntObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(!entry.isIntersecting)return;counters.forEach(c=>{const el=document.getElementById(c.id);if(!el)return;const start=c.target===1976?1900:0;animCount(el,start,c.target,c.suffix);});cntObs.disconnect();});},{threshold:0.4});
-const defSection=document.querySelector('.def-section');
-if(defSection)cntObs.observe(defSection);
+// ─── COUNTERS
+function animCount(el,start,end,sfx,dur=1600){const s=performance.now();const run=t=>{const p=Math.min((t-s)/dur,1);const e=1-Math.pow(1-p,3);el.textContent=Math.round(start+(end-start)*e)+sfx;if(p<1)requestAnimationFrame(run);};requestAnimationFrame(run);}
+new IntersectionObserver(entries=>{if(!entries[0].isIntersecting)return;animCount(document.getElementById('cnt1'),0,55,'M+');animCount(document.getElementById('cnt2'),1900,1976,'');animCount(document.getElementById('cnt3'),0,48,'%');animCount(document.getElementById('cnt4'),0,7,'days');},{threshold:.4}).observe(document.querySelector('.def-section'));
 
-// ── SCROLL REVEAL
-const srObs=new IntersectionObserver(entries=>{entries.forEach((entry,i)=>{if(entry.isIntersecting){setTimeout(()=>entry.target.classList.add('in'),i*80);srObs.unobserve(entry.target);}});},{threshold:0.08});
+// ─── SCROLL REVEAL
+const srObs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*80);srObs.unobserve(e.target);}});},{threshold:.08});
 document.querySelectorAll('.sr').forEach(el=>srObs.observe(el));
 
-// ── TIMELINE DATA with REAL meme images
+// ─── TIMELINE DATA
 const tlData=[
-  {
-    year:'1976',era:'The Origin',title:'THE WORD IS BORN',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/The_Selfish_Gene_book_cover.jpg/480px-The_Selfish_Gene_book_cover.jpg',
-    desc:'Richard Dawkins coins "meme" in The Selfish Gene to describe units of cultural transmission.',
-    long:'Richard Dawkins needed a word for cultural transmission — ideas, tunes, fashions — that spread like biological genes but through imitation. He combined the Greek "mimeme" with "gene." He could not have imagined where this word would go. Dawkins himself has expressed mixed feelings about what the internet did to his concept — he meant it as a scientific term, not a name for funny dog photos.',
-    examples:['The Selfish Gene','Memetics','Cultural Evolution','Evolutionary Biology']
-  },
-  {
-    year:'1996',era:'Pre-Social Era',title:'DANCING BABY',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Dancing-baby.gif/240px-Dancing-baby.gif',
-    desc:'The first viral internet meme — a 3D-animated baby doing the cha-cha. Spread via email before social media existed.',
-    long:'Created in 1996 by Michael Girard as a 3D animation demo, the "Baby Cha-Cha" became the internet\'s first major meme. It spread across bulletin boards, newsgroups, and email chains. Ally McBeal even featured it. The pre-social era proved a timeless truth: if it\'s weird enough, it spreads. No algorithm required — just human impulse to share something inexplicably delightful.',
-    examples:['Dancing Baby','Hamster Dance','All Your Base Are Belong To Us','Badger Badger Mushroom']
-  },
-  {
-    year:'2003',era:'Image Macro Era',title:'THE LOLcat ERA',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/I_should_buy_a_boat_cat.jpg/480px-I_should_buy_a_boat_cat.jpg',
-    desc:'I Can Has Cheezburger launches. Impact font + misspelled captions dominate. The grammar of internet humor is established.',
-    long:'LOLcats defined the "classic meme" format: photo + Impact font + deliberate misspelling = comedy. Sites like 4chan, Something Awful, and I Can Has Cheezburger were the distribution channels. This era established the visual grammar of internet humor that still exists today. The Impact font became so synonymous with memes it\'s practically a historical artifact.',
-    examples:['I Can Has Cheezburger','Ceiling Cat','O RLY Owl','Fail Blog','Rickrolling','Lolrus']
-  },
-  {
-    year:'2008',era:'Reddit Age',title:'RAGE COMICS',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Trollface_non-free.png/480px-Trollface_non-free.png',
-    desc:'Stick figure comics with expressive faces conquer Reddit. Forever Alone, Trollface, Me Gusta — universal emotional grammar.',
-    long:'Reddit became the epicenter of meme culture during the Rage Comics era. The simple stick-figure panels with expressive faces democratized meme creation — anyone could tell relatable stories. This period birthed the "relatable meme" as a genre and proved that emotional resonance, not technical skill, was the key ingredient. Forever Alone became a whole personality.',
-    examples:['Trollface','Forever Alone','Me Gusta','Y U NO','Derpina','Cereal Guy','Are You Serious']
-  },
-  {
-    year:'2012',era:'The Golden Age',title:'DOGE & GRUMPY CAT',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg',
-    desc:'Memes achieve peak mainstream saturation. Grumpy Cat gets a movie. Brands desperately try to speak internet.',
-    long:'The Golden Age produced memes that transcended the internet: Doge\'s broken English went mainstream, Grumpy Cat (Tardar Sauce) earned over $100 million, Distracted Boyfriend became a stock photo. Brands desperately tried to "do memes." This era proved memes were a genuine cultural force — and exposed a permanent truth: corporations cannot authentically participate in meme culture, only imitate it badly.',
-    examples:['Doge','Grumpy Cat','Distracted Boyfriend','Success Kid','Bad Luck Brian','Overly Attached Girlfriend']
-  },
-  {
-    year:'2016',era:'Absurdist Wave',title:'THE SURREAL ERA',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Is_this_a_pigeon.png/640px-Is_this_a_pigeon.png',
-    desc:'The internet retreats into deliberate nonsense. Deep-fried images, multi-layer irony, memes about memes.',
-    long:'As memes became mainstream, the internet retreated into deliberate absurdism. "Surreal memes" deconstructed the format. References stacked on references. "Deep Fried" images with extreme compression artifacts and multi-layered irony dominated. Memes-about-memes. This era was the internet\'s immune response — refusing to be understood by outsiders. The more corporate the mainstream became, the more chaotic the underground went.',
-    examples:['Big Chungus','Tide Pod Challenge','Is This a Pigeon?','They Did Surgery on a Grape','Coffin Dance','E']
-  },
-  {
-    year:'2019',era:'TikTok Mutation',title:'VIDEO TAKES OVER',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Social_media_apps.jpg/640px-Social_media_apps.jpg',
-    desc:'TikTok redefines memes as sounds and formats. Sea Shanty TikTok, Corn Kid, audio remixes — the format mutates completely.',
-    long:'TikTok fundamentally changed what a meme could be. Now they were sounds, dances, green-screen reactions, and duets. A meme was no longer just an image — it was an audio clip remixed across millions of videos. The Ratatouille Musical, Sea Shanty TikTok, and Corn Kid showed memes could be wholesome, collaborative, long-form, and community-driven. A new era of participatory culture.',
-    examples:['Sea Shanty TikTok','Corn Kid','POV Videos','Among Us','Berries and Cream','NPC Streaming']
-  },
-  {
-    year:'2023',era:'AI Age',title:'THE AI TAKEOVER',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/ChatGPT_logo.svg/480px-ChatGPT_logo.svg.png',
-    desc:'AI-generated memes and deepfakes blur authenticity. NPC culture, AI Presidents, and a new question: what is real?',
-    long:'AI entered the meme chat. Midjourney, DALL-E, and GPT-4 enabled anyone to generate images in seconds. "NPC streaming" went viral. AI Presidents playing video games racked up millions of views. Deepfake culture raised new questions about authenticity. The Balenciaga Pope became a watershed moment: a fake image believed by millions. The meme has fully detached from reality, and nobody agrees if that\'s good or terrifying.',
-    examples:['NPC Streaming','AI Pope Puffer','Balenciaga Pope','Grimace Shake','Rizz','Delulu is the Solulu']
-  }
+  {year:'1976',era:'The Origin',title:'THE WORD IS BORN',svgKey:'selfish_gene',desc:'Richard Dawkins coins "meme" in The Selfish Gene to describe units of cultural transmission.',long:'Richard Dawkins needed a word for cultural transmission — ideas, tunes, fashions — that spread like biological genes but through imitation. He combined the Greek "mimeme" with "gene." He could not have imagined where this word would go.',examples:['The Selfish Gene','Memetics','Cultural Evolution','Evolutionary Biology']},
+  {year:'1996',era:'Pre-Social Era',title:'DANCING BABY',svgKey:'dancing_baby',desc:'The first viral internet meme — a 3D-animated baby doing the cha-cha. Spread via email before social media existed.',long:'Created in 1996 by Michael Girard as a 3D animation demo, the "Baby Cha-Cha" became the internet\'s first major meme. It spread across bulletin boards, newsgroups, and email chains. Ally McBeal even featured it.',examples:['Dancing Baby','Hamster Dance','All Your Base','Badger Badger']},
+  {year:'2003',era:'Image Macro Era',title:'THE LOLcat ERA',svgKey:'lolcat',desc:'I Can Has Cheezburger launches. Impact font + misspelled captions dominate.',long:'LOLcats defined the "classic meme" format: photo + Impact font + deliberate misspelling = comedy. Sites like 4chan, Something Awful, and I Can Has Cheezburger were the distribution channels.',examples:['I Can Has Cheezburger','Ceiling Cat','O RLY Owl','Fail Blog','Rickrolling']},
+  {year:'2008',era:'Reddit Age',title:'RAGE COMICS',svgKey:'rage_comics',desc:'Stick figure comics with expressive faces conquer Reddit. Forever Alone, Trollface, Me Gusta — universal emotional grammar.',long:'Reddit became the epicenter of meme culture during the Rage Comics era. The simple stick-figure panels democratized meme creation. This period birthed the "relatable meme" as a genre.',examples:['Trollface','Forever Alone','Me Gusta','Y U NO','Derpina']},
+  {year:'2012',era:'The Golden Age',title:'DOGE & GRUMPY CAT',svgKey:'doge',desc:'Memes achieve peak mainstream saturation. Grumpy Cat gets a movie. Brands desperately try to speak internet.',long:'The Golden Age produced memes that transcended the internet: Doge\'s broken English went mainstream, Grumpy Cat earned over $100 million, Distracted Boyfriend became a stock photo.',examples:['Doge','Grumpy Cat','Distracted Boyfriend','Success Kid','Bad Luck Brian']},
+  {year:'2016',era:'Absurdist Wave',title:'THE SURREAL ERA',svgKey:'surreal',desc:'The internet retreats into deliberate nonsense. Deep-fried images, multi-layer irony, memes about memes.',long:'As memes became mainstream, the internet retreated into deliberate absurdism. "Surreal memes" deconstructed the format. This era was the internet\'s immune response — refusing to be understood by outsiders.',examples:['Big Chungus','Is This a Pigeon?','They Did Surgery on a Grape','Coffin Dance','E']},
+  {year:'2019',era:'TikTok Mutation',title:'VIDEO TAKES OVER',svgKey:'tiktok',desc:'TikTok redefines memes as sounds and formats. Sea Shanty TikTok, Corn Kid, audio remixes.',long:'TikTok fundamentally changed what a meme could be. Now they were sounds, dances, green-screen reactions, and duets. A meme was no longer just an image — it was an audio clip remixed across millions of videos.',examples:['Sea Shanty TikTok','Corn Kid','POV Videos','Among Us','NPC Streaming']},
+  {year:'2023',era:'AI Age',title:'THE AI TAKEOVER',svgKey:'ai_age',desc:'AI-generated memes and deepfakes blur authenticity. NPC culture, AI Presidents, and a new question: what is real?',long:'AI entered the meme chat. Midjourney, DALL-E, and GPT-4 enabled anyone to generate images in seconds. Deepfake culture raised new questions about authenticity. The meme has fully detached from reality.',examples:['NPC Streaming','Balenciaga Pope','Grimace Shake','Rizz','Delulu']}
 ];
 
 const tlTrack=document.getElementById('tlTrack');
 tlData.forEach(item=>{
-  const card=document.createElement('div');
-  card.className='tl-card';
-  card.innerHTML=`
-    <div class="tl-year">${item.year}</div>
-    <img class="tl-img" src="${item.img}" alt="${item.title}" loading="lazy" onerror="this.style.display='none'"/>
-    <div class="tl-era">${item.era}</div>
-    <div class="tl-title">${item.title}</div>
-    <div class="tl-desc">${item.desc}</div>
-    <div class="tl-more">Read more <span class="tl-more-arrow">→</span></div>
-  `;
+  const card=document.createElement('div');card.className='tl-card';
+  card.innerHTML=`<div class="tl-year">${item.year}</div><div class="tl-img-wrap">${MEME_SVG[item.svgKey]||''}</div><div class="tl-era">${item.era}</div><div class="tl-title">${item.title}</div><div class="tl-desc">${item.desc}</div><div class="tl-more">Read more <span>→</span></div>`;
   card.addEventListener('click',()=>openModal(item));
   tlTrack.appendChild(card);
 });
 
-// ── GALLERY DATA with real Wikipedia images
+// ─── GALLERY DATA
 const galleryData=[
-  {
-    name:'Doge',year:'2013',cat:'classic',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg',
-    desc:'"Wow. Such meme. Very viral." The Shiba Inu that launched a thousand crypto coins and a new broken grammar.'
-  },
-  {
-    name:'This Is Fine',year:'2013',cat:'reaction',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/This_is_fine_-_KC_Green.png/640px-This_is_fine_-_KC_Green.png',
-    desc:'A dog sipping coffee as the world burns. Became the definitive symbol of millennial dissociation.'
-  },
-  {
-    name:'Distracted Boyfriend',year:'2017',cat:'format',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Distracted_Boyfriend.jpg/480px-Distracted_Boyfriend.jpg',
-    desc:'A single stock photo became the universal format for human hypocrisy, consumerism, and every political argument.'
-  },
-  {
-    name:'Grumpy Cat',year:'2012',cat:'classic',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/No_longer_Grumpy_Cat_%28Tardar_Sauce%29.jpg/480px-No_longer_Grumpy_Cat_%28Tardar_Sauce%29.jpg',
-    desc:'Tardar Sauce earned over $100M in brand deals. No meme has crossed from internet to boardroom faster.'
-  },
-  {
-    name:'Rickroll',year:'2007',cat:'viral',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Rickrolling_-_We%27re_No_Strangers_To_Love.jpg/480px-Rickrolling_-_We%27re_No_Strangers_To_Love.jpg',
-    desc:'The bait-and-switch prank that never got old. Rick Astley himself is in on it now. 1.4B YouTube views and counting.'
-  },
-  {
-    name:'Woman Yelling at Cat',year:'2019',cat:'format',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Smudge_the_Cat.jpg/480px-Smudge_the_Cat.jpg',
-    desc:'Real Housewives meets Smudge the Cat. Two unrelated images combined to become every disagreement, ever.'
-  },
-  {
-    name:'Drake Pointing',year:'2015',cat:'format',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg',
-    desc:'Disapproval panel. Approval panel. Still the most replicated two-panel format six years after going viral.'
-  },
-  {
-    name:'Harambe',year:'2016',cat:'viral',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Harambe_at_the_Cincinnati_Zoo_c._2015.jpg/480px-Harambe_at_the_Cincinnati_Zoo_c._2015.jpg',
-    desc:'A gorilla. A child. A zoo. An entire year of unified internet grief. "Dicks out for Harambe" entered the lexicon.'
-  },
-  {
-    name:'Is This a Pigeon?',year:'2011',cat:'format',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Is_this_a_pigeon.png/480px-Is_this_a_pigeon.png',
-    desc:'A 1991 anime screenshot became the definitive format for mistaking one thing for another. Extremely flexible template.'
-  },
-  {
-    name:'Ice Bucket Challenge',year:'2014',cat:'viral',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Ice_Bucket_Challenge_DVIDS_3.jpg/480px-Ice_Bucket_Challenge_DVIDS_3.jpg',
-    desc:'Raised $220M for ALS research. Proof that meme culture, when directed well, can literally fund scientific breakthroughs.'
-  },
-  {
-    name:'Hide the Pain Harold',year:'2011',cat:'classic',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Doge_meme.jpg/480px-Doge_meme.jpg',
-    desc:'Stock model András Arató\'s strained smile became universal "I\'m fine (I\'m not fine)" energy. He fully embraced it.'
-  },
-  {
-    name:'Trollface',year:'2008',cat:'classic',
-    img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Trollface_non-free.png/480px-Trollface_non-free.png',
-    desc:'The face of internet mischief. Spawned the "U MAD?" culture and entire libraries of rage comics.'
-  },
+  {name:'Doge',year:'2013',cat:'classic',svgKey:'doge',desc:'"Wow. Such meme. Very viral." The Shiba Inu that launched a thousand crypto coins and a new broken grammar.'},
+  {name:'This Is Fine',year:'2013',cat:'reaction',svgKey:'thisisfine',desc:'A dog sipping coffee as the world burns. Became the definitive symbol of millennial dissociation.'},
+  {name:'Distracted Boyfriend',year:'2017',cat:'format',svgKey:'distracted',desc:'A single stock photo became the universal format for human hypocrisy, consumerism, and every political argument.'},
+  {name:'Grumpy Cat',year:'2012',cat:'classic',svgKey:'grumpycat',desc:'Tardar Sauce earned over $100M in brand deals. No meme has crossed from internet to boardroom faster.'},
+  {name:'Rickroll',year:'2007',cat:'viral',svgKey:'rickroll',desc:'The bait-and-switch prank that never got old. Rick Astley himself is in on it now. 1.4B YouTube views and counting.'},
+  {name:'Woman Yelling at Cat',year:'2019',cat:'format',svgKey:'woman_cat',desc:'Real Housewives meets Smudge the Cat. Two unrelated images combined to become every disagreement, ever.'},
+  {name:'Drake Pointing',year:'2015',cat:'format',svgKey:'drake',desc:'Disapproval panel. Approval panel. Still the most replicated two-panel format six years after going viral.'},
+  {name:'Harambe',year:'2016',cat:'viral',svgKey:'harambe',desc:'A gorilla. A child. A zoo. An entire year of unified internet grief. "Dicks out for Harambe" entered the lexicon.'},
+  {name:'Is This a Pigeon?',year:'2011',cat:'format',svgKey:'pigeon',desc:'A 1991 anime screenshot became the definitive format for mistaking one thing for another.'},
+  {name:'Ice Bucket Challenge',year:'2014',cat:'viral',svgKey:'icebucket',desc:'Raised $220M for ALS research. Proof that meme culture, when directed well, can literally fund scientific breakthroughs.'},
+  {name:'Rage Comics',year:'2008',cat:'classic',svgKey:'rage_comics',desc:'Trollface, Forever Alone, Me Gusta — stick-figure comics that built the emotional vocabulary of the internet.'},
+  {name:'Trollface',year:'2008',cat:'classic',svgKey:'trollface',desc:'The face of internet mischief. Spawned the "U MAD?" culture and entire libraries of rage comics.'},
 ];
 
-const memeGrid=document.getElementById('memeGrid');
-const filterBar=document.getElementById('filterBar');
-const filterCats=['all','classic','reaction','format','viral'];
-filterCats.forEach(cat=>{
-  const btn=document.createElement('button');
-  btn.className='filt'+(cat==='all'?' active':'');
-  btn.textContent=cat==='all'?'All':cat.charAt(0).toUpperCase()+cat.slice(1);
-  btn.dataset.cat=cat;
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.meme-card').forEach(c=>{c.classList.toggle('hidden',cat!=='all'&&c.dataset.cat!==cat);});
-  });
+const filterBar=document.getElementById('filterBar'),memeGrid=document.getElementById('memeGrid');
+['all','classic','reaction','format','viral'].forEach(cat=>{
+  const btn=document.createElement('button');btn.className='filt'+(cat==='all'?' active':'');
+  btn.textContent=cat==='all'?'All':cat[0].toUpperCase()+cat.slice(1);btn.dataset.cat=cat;
+  btn.addEventListener('click',()=>{document.querySelectorAll('.filt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.meme-card').forEach(c=>{c.classList.toggle('hidden',cat!=='all'&&c.dataset.cat!==cat);});});
   filterBar.appendChild(btn);
 });
 galleryData.forEach(m=>{
-  const card=document.createElement('div');
-  card.className='meme-card sr';
-  card.dataset.cat=m.cat;
-  card.innerHTML=`
-    <div class="meme-tag">${m.cat}</div>
-    <img class="meme-thumb" src="${m.img}" alt="${m.name}" loading="lazy" onerror="this.style.background='#1a1a22';this.style.minHeight='220px'"/>
-    <div class="meme-overlay"></div>
-    <div class="meme-info">
-      <div class="meme-meta"><span class="meme-cat">${m.cat}</span><span class="meme-year">${m.year}</span></div>
-      <div class="meme-name">${m.name}</div>
-      <div class="meme-desc">${m.desc}</div>
-    </div>
-  `;
-  srObs.observe(card);
-  memeGrid.appendChild(card);
+  const card=document.createElement('div');card.className='meme-card sr';card.dataset.cat=m.cat;
+  card.innerHTML=`<div class="meme-tag">${m.cat}</div><div class="meme-img-wrap">${MEME_SVG[m.svgKey]||''}</div><div class="meme-overlay"></div><div class="meme-info"><div class="meme-meta"><span class="meme-cat">${m.cat}</span><span class="meme-year">${m.year}</span></div><div class="meme-name">${m.name}</div><div class="meme-desc">${m.desc}</div></div>`;
+  srObs.observe(card);memeGrid.appendChild(card);
 });
 
-// ── IMPACT
-const impactData=[
-  {num:'$88B',label:'Peak Dogecoin Cap',title:'Economics',body:'Dogecoin, a joke currency, hit $88 billion market cap. GameStop\'s $28B short squeeze was organised via Reddit memes. Meme stocks are now a legitimate financial category tracked by Wall Street.'},
-  {num:'220M',label:'ALS Research Dollars',title:'Medicine',body:'The 2014 Ice Bucket Challenge raised over $220 million for ALS research, funding a significant breakthrough in understanding the disease. A meme directly accelerated science.'},
-  {num:'48%',label:'Gen Z News via Memes',title:'Media',body:'Nearly half of Gen Z learn about current events through meme formats on social media. News organisations now compete with meme accounts for information authority.'},
-  {num:'7yrs',label:'New Words in Dictionary',title:'Language',body:'"Vibe," "slay," "no cap," "bussin," and "based" originated in meme culture and entered the Oxford Dictionary. Memes are reshaping linguistics faster than any previous media format.'},
-  {num:'∞',label:'Political Movements',title:'Politics',body:'From Pepe\'s controversial adoption to election memes — internet culture directly influenced Brexit messaging, the 2016 US election, and protest movements worldwide. Memes are propaganda now.'},
-  {num:'100+',label:'Museum Collections',title:'Art',body:'Museums now archive memes. "Distracted Boyfriend" sold as fine art. The Smithsonian catalogues internet culture. Meme formats are studied in academic papers and MFA programmes.'},
-];
+// ─── IMPACT
 const impactGrid=document.getElementById('impactGrid');
-impactData.forEach((item,i)=>{
-  const card=document.createElement('div');
-  card.className='impact-card sr sr-d'+(i%3+1);
-  card.innerHTML=`<div class="impact-num">${item.num}</div><div class="impact-label">${item.label}</div><h3>${item.title}</h3><p>${item.body}</p>`;
-  srObs.observe(card);
-  impactGrid.appendChild(card);
+[{num:'$88B',label:'Peak Dogecoin Cap',title:'Economics',body:'Dogecoin, a joke currency, hit $88 billion market cap. GameStop\'s $28B short squeeze was organised via Reddit memes. Meme stocks are now a legitimate financial category.'},
+ {num:'220M',label:'ALS Research Dollars',title:'Medicine',body:'The 2014 Ice Bucket Challenge raised over $220 million for ALS research, funding a significant breakthrough. A meme directly accelerated science.'},
+ {num:'48%',label:'Gen Z News via Memes',title:'Media',body:'Nearly half of Gen Z learn about current events through meme formats. News organisations now compete with meme accounts for information authority.'},
+ {num:'7yrs',label:'New Words in Dictionary',title:'Language',body:'"Vibe," "slay," "no cap," "bussin," and "based" originated in meme culture and entered the Oxford Dictionary. Memes are reshaping linguistics faster than any previous media format.'},
+ {num:'∞',label:'Political Movements',title:'Politics',body:'From Pepe\'s controversial adoption to election memes — internet culture directly influenced Brexit, the 2016 US election, and protest movements worldwide.'},
+ {num:'100+',label:'Museum Collections',title:'Art',body:'Museums now archive memes. "Distracted Boyfriend" sold as fine art. The Smithsonian catalogues internet culture. Meme formats are studied in MFA programmes.'}
+].forEach((item,i)=>{
+  const c=document.createElement('div');c.className='impact-card sr sr-d'+(i%3+1);
+  c.innerHTML=`<div class="impact-num">${item.num}</div><div class="impact-label">${item.label}</div><h3>${item.title}</h3><p>${item.body}</p>`;
+  srObs.observe(c);impactGrid.appendChild(c);
 });
 
-// ── GENERATOR
-const templates=[{emoji:'🐸',label:'Pepe'},{emoji:'🐕',label:'Doge'},{emoji:'🔥',label:'Fine'},{emoji:'💀',label:'Dead'},{emoji:'😤',label:'Troll'},{emoji:'🧑‍💻',label:'Harold'},{emoji:'👁️',label:'Chloe'},{emoji:'🤌',label:'Chef'},{emoji:'🌽',label:'Corn'}];
-let selTmpl=templates[0];
+// ─── GENERATOR
+const tmpls=[{e:'🐸',l:'Pepe'},{e:'🐕',l:'Doge'},{e:'🔥',l:'Fine'},{e:'💀',l:'Dead'},{e:'😤',l:'Troll'},{e:'🧑‍💻',l:'Harold'},{e:'👁️',l:'Chloe'},{e:'🤌',l:'Chef'},{e:'🌽',l:'Corn'}];
+let selT=tmpls[0];
 const tmplRow=document.getElementById('tmplRow');
-templates.forEach((t,i)=>{
-  const btn=document.createElement('button');
-  btn.className='tmpl-btn'+(i===0?' sel':'');
-  btn.textContent=t.emoji;btn.title=t.label;
-  btn.addEventListener('click',()=>{document.querySelectorAll('.tmpl-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selTmpl=t;updatePreview();});
-  tmplRow.appendChild(btn);
-});
-function updatePreview(){
-  const top=document.getElementById('topTxt').value.toUpperCase()||'WHEN YOU';
-  const bot=document.getElementById('botTxt').value.toUpperCase()||'AND IT WORKS';
-  document.getElementById('mPreviewTop').textContent=top;
-  document.getElementById('mPreviewBot').textContent=bot;
-  const em=document.getElementById('mPreviewEmoji');
-  em.style.animation='none';void em.offsetWidth;em.textContent=selTmpl.emoji;
-  em.style.animation='float 4s ease-in-out infinite';
-}
-document.getElementById('topTxt').addEventListener('input',updatePreview);
-document.getElementById('botTxt').addEventListener('input',updatePreview);
-document.getElementById('genBtn').addEventListener('click',updatePreview);
-const rTops=['WHEN YOU','POV:','ME WHEN','NOBODY:','MY BRAIN AT 3AM','SOCIETY:','MY WALLET:','BOOMERS:'];
-const rBots=['AND IT WORKS','STONKS 📈','THIS IS FINE 🔥','PLEASE SEND HELP','BASED 🗿','NO CAP FR','I UNDERSTOOD THAT REFERENCE','EVERY. SINGLE. TIME.'];
-document.getElementById('randBtn').addEventListener('click',()=>{
-  const rt=templates[Math.floor(Math.random()*templates.length)];
-  document.querySelectorAll('.tmpl-btn').forEach((b,i)=>b.classList.toggle('sel',templates[i]===rt));
-  selTmpl=rt;
-  document.getElementById('topTxt').value=rTops[Math.floor(Math.random()*rTops.length)];
-  document.getElementById('botTxt').value=rBots[Math.floor(Math.random()*rBots.length)];
-  updatePreview();
-});
-document.getElementById('copyBtn').addEventListener('click',()=>{
-  const text=`${document.getElementById('mPreviewTop').textContent}\n${selTmpl.emoji}\n${document.getElementById('mPreviewBot').textContent}\n\n— MEMEPLEX 🏛️`;
-  navigator.clipboard.writeText(text).then(()=>{const btn=document.getElementById('copyBtn');btn.textContent='✅ Copied!';setTimeout(()=>btn.innerHTML='📋 Copy meme text',2000);});
-});
+tmpls.forEach((t,i)=>{const b=document.createElement('button');b.className='tmpl-btn'+(i===0?' sel':'');b.textContent=t.e;b.title=t.l;b.addEventListener('click',()=>{document.querySelectorAll('.tmpl-btn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');selT=t;upPrev();});tmplRow.appendChild(b);});
+function upPrev(){const top=document.getElementById('topTxt').value.toUpperCase()||'WHEN YOU';const bot=document.getElementById('botTxt').value.toUpperCase()||'AND IT WORKS';document.getElementById('mPreviewTop').textContent=top;document.getElementById('mPreviewBot').textContent=bot;const em=document.getElementById('mPreviewEmoji');em.style.animation='none';void em.offsetWidth;em.textContent=selT.e;em.style.animation='float 4s ease-in-out infinite';}
+document.getElementById('topTxt').addEventListener('input',upPrev);document.getElementById('botTxt').addEventListener('input',upPrev);document.getElementById('genBtn').addEventListener('click',upPrev);
+const rT=['WHEN YOU','POV:','ME WHEN','NOBODY:','MY BRAIN AT 3AM','SOCIETY:','MY WALLET:'];
+const rB=['AND IT WORKS','STONKS 📈','THIS IS FINE 🔥','PLEASE SEND HELP','BASED 🗿','NO CAP FR','EVERY. SINGLE. TIME.'];
+document.getElementById('randBtn').addEventListener('click',()=>{const rt=tmpls[Math.floor(Math.random()*tmpls.length)];document.querySelectorAll('.tmpl-btn').forEach((b,i)=>b.classList.toggle('sel',tmpls[i]===rt));selT=rt;document.getElementById('topTxt').value=rT[Math.floor(Math.random()*rT.length)];document.getElementById('botTxt').value=rB[Math.floor(Math.random()*rB.length)];upPrev();});
+document.getElementById('copyBtn').addEventListener('click',()=>{navigator.clipboard.writeText(`${document.getElementById('mPreviewTop').textContent}\n${selT.e}\n${document.getElementById('mPreviewBot').textContent}\n\n— MEMEPLEX 🏛️`).then(()=>{const b=document.getElementById('copyBtn');b.textContent='✅ Copied!';setTimeout(()=>b.innerHTML='📋 Copy meme text',2000);});});
 
-// ── QUIZ
-const quizData=[
-  {q:'Richard Dawkins coined the word "meme" in which year?',opts:['1986','1976','1966','1996'],correct:1,fact:'In "The Selfish Gene" (1976), Dawkins described memes as units of cultural transmission. He combined the Greek "mimeme" with "gene." He\'s since expressed mixed feelings about what the internet did to his concept.'},
-  {q:'What is widely considered the first viral internet meme?',opts:['LOLcats','Rickroll','Dancing Baby','Hamster Dance'],correct:2,fact:'The "Dancing Baby" (1996) was created as a 3D animation software demo. It spread via email chains and appeared in Ally McBeal — the internet\'s first truly viral phenomenon, pre-dating social media.'},
-  {q:'Doge\'s iconic broken-English captions use which font?',opts:['Comic Sans','Impact','Helvetica','Arial'],correct:0,fact:'Comic Sans was a deliberate choice — its childlike quality perfectly matched the stream-of-consciousness "wow such grammar" voice of Doge. A genius design accident.'},
-  {q:'Dogecoin reached what approximate peak market cap in 2021?',opts:['$8 billion','$44 billion','$88 billion','$120 billion'],correct:2,fact:'At its peak in May 2021, Dogecoin\'s market cap hit ~$88 billion. A meme coin started as a joke in 2013 became more valuable than most Fortune 500 companies.'},
-  {q:'The "Woman Yelling at Cat" meme — who is the woman?',opts:['Taylor Armstrong (RHOBH)','Wendy Williams','Kim Kardashian','Lisa Vanderpump'],correct:0,fact:'Taylor Armstrong from Real Housewives of Beverly Hills was photographed during an emotional moment in 2011. The cat is Smudge, who hates vegetables. Neither knew they\'d become immortal.'},
-  {q:'Which platform fundamentally shifted memes from images to audio?',opts:['Instagram','Twitter','TikTok','YouTube'],correct:2,fact:'TikTok\'s audio-first algorithm transformed memes into remixable sounds and video formats. A meme is now as likely to be an audio clip as a static image — a fundamental format shift.'},
-  {q:'The Ice Bucket Challenge raised money for research into:',opts:['Multiple Sclerosis','Parkinson\'s Disease','ALS (Lou Gehrig\'s Disease)','Alzheimer\'s Disease'],correct:2,fact:'The 2014 Ice Bucket Challenge raised over $220 million for ALS research worldwide, funding a significant scientific breakthrough. Memes can literally save lives.'},
-  {q:'"This Is Fine" — the burning room dog — was created by:',opts:['Matt Furie','KC Green','Ryan Pagelow','John McNamee'],correct:1,fact:'KC Green published the strip in his webcomic "Gunshow" in 2013. The full comic goes further: the dog keeps insisting it\'s fine as it slowly melts. Extremely relatable.'},
+// ─── QUIZ
+const qD=[
+  {q:'Richard Dawkins coined the word "meme" in which year?',opts:['1986','1976','1966','1996'],c:1,f:'In "The Selfish Gene" (1976), Dawkins described memes as units of cultural transmission, combining the Greek "mimeme" with "gene."'},
+  {q:'What is widely considered the first viral internet meme?',opts:['LOLcats','Rickroll','Dancing Baby','Hamster Dance'],c:2,f:'The "Dancing Baby" (1996) was created as a 3D animation demo. It spread via email chains and appeared in Ally McBeal — the internet\'s first viral phenomenon.'},
+  {q:'Doge\'s iconic broken-English captions use which font?',opts:['Comic Sans','Impact','Helvetica','Arial'],c:0,f:'Comic Sans was deliberate — its childlike quality perfectly matched the "wow such grammar" voice of Doge. A genius design accident.'},
+  {q:'Dogecoin\'s approximate peak market cap in 2021?',opts:['$8 billion','$44 billion','$88 billion','$120 billion'],c:2,f:'At its peak in May 2021, Dogecoin\'s market cap hit ~$88 billion — more valuable than most Fortune 500 companies.'},
+  {q:'The "Woman Yelling at Cat" meme — who is the woman?',opts:['Taylor Armstrong (RHOBH)','Wendy Williams','Kim Kardashian','Lisa Vanderpump'],c:0,f:'Taylor Armstrong from Real Housewives of Beverly Hills. The cat is Smudge. Neither knew they\'d become immortal.'},
+  {q:'Which platform fundamentally shifted memes from images to audio?',opts:['Instagram','Twitter','TikTok','YouTube'],c:2,f:'TikTok\'s audio-first algorithm transformed memes into remixable sounds and video formats.'},
+  {q:'The Ice Bucket Challenge raised money for research into:',opts:['Multiple Sclerosis','Parkinson\'s Disease','ALS (Lou Gehrig\'s Disease)','Alzheimer\'s'],c:2,f:'The 2014 Ice Bucket Challenge raised over $220 million for ALS research, funding a significant scientific breakthrough.'},
+  {q:'"This Is Fine" creator KC Green published it in which webcomic?',opts:['Hyperbole and a Half','Gunshow','XKCD','Cyanide & Happiness'],c:1,f:'KC Green published it in "Gunshow" in 2013. The full strip goes further: the dog keeps insisting it\'s fine as it slowly melts.'},
 ];
-let qIndex=0,score=0,qAnswered=false;
-function renderQuiz(){
-  const body=document.getElementById('quizBody');
-  const progBar=document.getElementById('qProgBar');
-  const progText=document.getElementById('qProgText');
-  if(qIndex>=quizData.length){renderResult();return;}
-  const q=quizData[qIndex];
-  const pct=(qIndex/quizData.length)*100;
-  if(progBar)progBar.style.width=pct+'%';
-  if(progText)progText.textContent=`Question ${qIndex+1} of ${quizData.length}`;
-  qAnswered=false;
-  body.innerHTML=`
-    <div class="quiz-q-num">Question ${qIndex+1} / ${quizData.length}</div>
-    <div class="quiz-question">${q.q}</div>
-    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}</div>
-    <div class="quiz-fact" id="qFact">${q.fact}</div>
-    <div class="quiz-next" id="qNext"><button class="btn-primary" id="qNextBtn" style="width:100%">${qIndex===quizData.length-1?'See My Score →':'Next Question →'}</button></div>
-  `;
-  document.querySelectorAll('.qopt').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      if(qAnswered)return;qAnswered=true;
-      const chosen=parseInt(btn.dataset.i);
-      if(chosen===q.correct)score++;
-      document.querySelectorAll('.qopt').forEach((b,i)=>{b.disabled=true;if(i===q.correct)b.classList.add('correct');if(i===chosen&&chosen!==q.correct)b.classList.add('wrong');});
-      document.getElementById('qFact').classList.add('show');
-      document.getElementById('qNext').classList.add('show');
-    });
-  });
-  document.getElementById('qNextBtn').addEventListener('click',()=>{qIndex++;renderQuiz();});
+let qi=0,sc=0,qa=false;
+function rQ(){
+  const body=document.getElementById('quizBody'),pb=document.getElementById('qProgBar'),pt=document.getElementById('qProgText');
+  if(qi>=qD.length){rRes();return;}
+  const q=qD[qi];pb.style.width=(qi/qD.length*100)+'%';pt.textContent=`Question ${qi+1} of ${qD.length}`;qa=false;
+  body.innerHTML=`<div class="quiz-q-num">Question ${qi+1} / ${qD.length}</div><div class="quiz-question">${q.q}</div><div class="quiz-opts">${q.opts.map((o,i)=>`<button class="qopt" data-i="${i}">${o}</button>`).join('')}</div><div class="quiz-fact" id="qFact">${q.f}</div><div class="quiz-next" id="qNext"><button class="btn-primary" id="qNB" style="width:100%">${qi===qD.length-1?'See My Score →':'Next Question →'}</button></div>`;
+  document.querySelectorAll('.qopt').forEach(btn=>{btn.addEventListener('click',()=>{if(qa)return;qa=true;const ch=parseInt(btn.dataset.i);if(ch===q.c)sc++;document.querySelectorAll('.qopt').forEach((b,i)=>{b.disabled=true;if(i===q.c)b.classList.add('correct');if(i===ch&&ch!==q.c)b.classList.add('wrong');});document.getElementById('qFact').classList.add('show');document.getElementById('qNext').classList.add('show');});});
+  document.getElementById('qNB').addEventListener('click',()=>{qi++;rQ();});
 }
-function renderResult(){
-  const body=document.getElementById('quizBody');
-  const pct=Math.round((score/quizData.length)*100);
+function rRes(){
+  const body=document.getElementById('quizBody'),pct=Math.round(sc/qD.length*100);
   document.getElementById('qProgBar').style.width='100%';
-  const titles=[[0,'Boomer Energy 👴','You\'ve clearly been using the internet for email only. Respect the commitment.'],[3,'Lurker Status 👀','You\'ve scrolled past a few memes in your time. There\'s hope.'],[5,'Chronically Online 🖥️','You know your memes. Your sleep schedule, however, does not know you.'],[7,'Meme Archaeologist 🏛️','You understand the internet at a cellular level. Please seek help.'],[8,'You ARE the Meme 🏆','Touch. Grass. Immediately. You are the algorithm now.']];
-  const result=[...titles].reverse().find(t=>score>=t[0]);
-  body.innerHTML=`<div style="text-align:center;padding:1rem 0"><div class="result-big">${score}/${quizData.length}</div><div style="font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.25em;color:rgba(244,240,232,0.4);margin-bottom:.75rem">${pct}% MEME LITERACY</div><div class="result-tag">${result[1]}</div><div class="result-msg">${result[2]}</div><button class="btn-primary" onclick="qIndex=0;score=0;renderQuiz()" style="margin:0 auto">Try Again →</button></div>`;
+  const titles=[[0,'Boomer Energy 👴','You\'ve been using the internet for email only.'],[3,'Lurker Status 👀','You\'ve scrolled past a few memes in your time.'],[5,'Chronically Online 🖥️','You know your memes. Your sleep schedule does not.'],[7,'Meme Archaeologist 🏛️','You understand the internet at a cellular level.'],[8,'You ARE the Meme 🏆','Touch. Grass. Immediately.']];
+  const res=[...titles].reverse().find(t=>sc>=t[0]);
+  body.innerHTML=`<div style="text-align:center;padding:1rem 0"><div class="result-big">${sc}/${qD.length}</div><div style="font-family:var(--ff-cond);font-size:.65rem;letter-spacing:.25em;color:rgba(244,240,232,0.4);margin-bottom:.75rem">${pct}% MEME LITERACY</div><div class="result-tag">${res[1]}</div><div class="result-msg">${res[2]}</div><button class="btn-primary" onclick="qi=0;sc=0;rQ()" style="margin:0 auto">Try Again →</button></div>`;
 }
-renderQuiz();
+rQ();
 
-// ── MODAL
+// ─── MODAL
 const modalBg=document.getElementById('modalBg');
-const modalClose=document.getElementById('modalClose');
 function openModal(item){
-  document.getElementById('mImg').src=item.img;
+  document.getElementById('mImgWrap').innerHTML=MEME_SVG[item.svgKey]||'';
   document.getElementById('mEra').textContent=item.era+' · '+item.year;
   document.getElementById('mTitle').textContent=item.title;
   document.getElementById('mBody').textContent=item.long;
   document.getElementById('mChips').innerHTML=item.examples.map(e=>`<span class="chip">${e}</span>`).join('');
   modalBg.classList.add('open');document.body.style.overflow='hidden';
 }
-modalClose.addEventListener('click',closeModal);
+document.getElementById('modalClose').addEventListener('click',closeModal);
 modalBg.addEventListener('click',e=>{if(e.target===modalBg)closeModal();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 function closeModal(){modalBg.classList.remove('open');document.body.style.overflow='';}
 
-// ── NAV SCROLL
-const mainNav=document.getElementById('mainNav');
-window.addEventListener('scroll',()=>{mainNav.style.background=window.scrollY>80?'rgba(8,8,12,0.95)':'rgba(8,8,12,0.7)';});
+// ─── NAV SCROLL
+const mn=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{mn.style.background=window.scrollY>80?'rgba(8,8,12,0.95)':'rgba(8,8,12,0.7)';});
 
-// ── KONAMI
-const kc=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-let ki=0;
-document.addEventListener('keydown',e=>{if(e.key===kc[ki]){ki++;if(ki===kc.length){ki=0;triggerEgg();}}else ki=0;});
-function triggerEgg(){
-  const o=document.createElement('div');
-  o.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(8,8,12,0.97);backdrop-filter:blur(20px);cursor:none;';
-  o.innerHTML=`<div style="font-size:5rem;margin-bottom:1rem">🏆</div><div style="font-family:Anton,sans-serif;font-size:4rem;background:linear-gradient(135deg,#e8c547,#ff4d4d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem">KONAMI CODE</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;letter-spacing:.3em;color:rgba(244,240,232,0.4);text-transform:uppercase;margin-bottom:2rem">You are a true internet archaeologist</div><div style="font-size:4rem;letter-spacing:1rem">🐸💀😂🔥🥺</div><div style="font-family:'DM Sans',sans-serif;font-size:.75rem;color:rgba(244,240,232,0.2);margin-top:2rem">click anywhere to close</div>`;
-  o.addEventListener('click',()=>o.remove());
-  document.body.appendChild(o);
-}
-
-console.log('%c🐸 MEMEPLEX','font-size:2.5rem;font-weight:bold;color:#e8c547;font-family:Anton,sans-serif');
-console.log('%cYou found the console. Certified chronically online.','color:#ff4d4d;font-size:1rem');
+// ─── KONAMI
+const kc=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];let ki=0;
+document.addEventListener('keydown',e=>{if(e.key===kc[ki]){ki++;if(ki===kc.length){ki=0;const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(8,8,12,0.97);cursor:none;';o.innerHTML=`<div style="font-size:5rem">🏆</div><div style="font-family:Anton,sans-serif;font-size:4rem;background:linear-gradient(135deg,#e8c547,#ff4d4d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">KONAMI CODE</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:1rem;letter-spacing:.3em;color:rgba(244,240,232,0.4);margin:1rem 0">YOU ARE A TRUE INTERNET ARCHAEOLOGIST</div><div style="font-size:3rem">🐸💀😂🔥🥺</div><div style="color:rgba(244,240,232,0.2);font-size:.75rem;margin-top:2rem">click anywhere to close</div>`;o.addEventListener('click',()=>o.remove());document.body.appendChild(o);}}else ki=0;});
 </script>
 </body>
 </html>
+HTMLEOF
+echo "File size: $(wc -c < /mnt/user-data/outputs/memeplex.html) bytes"
+Output
+
+Command argument is 106_690 bytes, exceeding the 100_000-byte per-argument limit. For large content, pipe via stdin or use a file-write API instead of embedding the content inline in the command. Argument preview: 'cat > /mnt/user-data/outputs/memeplex.html << \'HTMLEOF\'\n<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8"/>\n<meta name="viewport" content="width=device-width,initial-scale=1.0"/>\n<title>ME'
+Done
